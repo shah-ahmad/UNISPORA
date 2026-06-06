@@ -279,6 +279,7 @@ function Index() {
                 title={authMode === "login" ? "Welcome back to UniSpora." : "Create your UniSpora account."}
                 action={authMode === "login" ? "Login" : "Sign Up"}
                 signup={authMode === "signup"}
+                onSuccess={() => setAuthMode(undefined)}
               />
             </div>
           </div>
