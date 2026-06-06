@@ -101,11 +101,11 @@ export function GlobeMap({
         map.resize();
         updateSelectedPoint();
         map.setFog({
-          color: "rgb(7, 18, 35)",
-          "high-color": "rgb(246, 166, 35)",
-          "horizon-blend": 0.18,
-          "space-color": "rgb(0, 7, 17)",
-          "star-intensity": globeStyle === "satellite" ? 0.35 : 0.8,
+          color: "rgb(4, 11, 25)",
+          "high-color": "rgb(74, 117, 166)",
+          "horizon-blend": 0.08,
+          "space-color": "rgb(0, 3, 10)",
+          "star-intensity": globeStyle === "satellite" ? 0.55 : 1,
         });
 
         setTimeout(() => {

@@ -23,8 +23,8 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background:
-    radial-gradient(circle at 72% 18%, rgba(246, 166, 35, 0.11), transparent 26rem),
-    radial-gradient(circle at 12% 18%, rgba(70, 137, 175, 0.09), transparent 30rem),
+    radial-gradient(circle at 76% 16%, rgba(70, 137, 175, 0.08), transparent 28rem),
+    radial-gradient(circle at 14% 18%, rgba(154, 202, 229, 0.055), transparent 32rem),
     #020913;
 }
 
@@ -69,11 +69,48 @@ select {
   position: relative;
   min-height: 100vh;
   overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(22, 52, 92, 0.16), transparent 34rem),
+    linear-gradient(180deg, #020813, #00050d);
 }
 
 .globe-stage {
   position: absolute;
   inset: 0;
+  z-index: 0;
+}
+
+.home-globe::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.56;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.88) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgba(154, 202, 229, 0.62) 0 1px, transparent 1.4px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.42) 0 0.8px, transparent 1.2px);
+  background-position:
+    18px 26px,
+    94px 72px,
+    142px 18px;
+  background-size:
+    180px 140px,
+    240px 190px,
+    310px 250px;
+  mix-blend-mode: screen;
+}
+
+.home-globe::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 48%, transparent 0 36rem, rgba(0, 5, 13, 0.22) 54rem),
+    linear-gradient(90deg, rgba(0, 6, 15, 0.16), transparent 18%, transparent 82%, rgba(0, 6, 15, 0.18));
 }
 
 .home-details {
