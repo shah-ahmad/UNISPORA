@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { University } from "@/data/universities";
+import type { University } from "@/types/university";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN ?? "";
 const DARK_MAP_STYLE = "mapbox://styles/ahmadshah2194/cmp1csqt3000801sj4sm44dfa";

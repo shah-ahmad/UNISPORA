@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AIAdvisorPanel } from "@/components/ai/AIAdvisorPanel";
 import { AppShell } from "@/components/layout/AppShell";
-import { getUniversityById } from "@/data/universities";
+import { useUniversities } from "@/hooks/useUniversities";
 
 export const Route = createFileRoute("/ai-advisor")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -12,11 +12,13 @@ export const Route = createFileRoute("/ai-advisor")({
 
 function AIAdvisor() {
   const { university: universityId } = Route.useSearch();
-  const university = getUniversityById(universityId);
+  const { universities, loading } = useUniversities();
+  const university = universities.find((item) => item.id === universityId) ?? universities[0];
+
   return (
     <AppShell>
       <div className="page-container">
-        <AIAdvisorPanel university={university} />
+        <AIAdvisorPanel university={university} loading={loading} />
       </div>
     </AppShell>
   );

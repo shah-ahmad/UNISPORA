@@ -7,10 +7,10 @@ import { SidebarHero } from "@/components/layout/SidebarHero";
 import { TopNav } from "@/components/layout/TopNav";
 import { UniversityDetailsPanel } from "@/components/globe/UniversityDetailsPanel";
 import { Auth } from "@/routes/login";
-import { universities } from "@/data/universities";
-import type { University } from "@/data/universities";
+import type { University } from "@/types/university";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useAppTheme } from "@/components/layout/theme";
+import { useUniversities } from "@/hooks/useUniversities";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -26,6 +26,7 @@ type GlobeFocusTarget = {
 type AuthMode = "login" | "signup";
 
 function Index() {
+  const { universities } = useUniversities();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>();
   const [searchOpen, setSearchOpen] = useState(false);
@@ -40,21 +41,21 @@ function Index() {
   const [selectedId, setSelectedId] = useState<string>();
   const [selectedPoint, setSelectedPoint] = useState<{ x: number; y: number }>();
   const { theme } = useAppTheme();
-  const continentOptions = useMemo(() => [all, ...unique(universities.map(getContinent))], []);
+  const continentOptions = useMemo(() => [all, ...unique(universities.map(getContinent))], [universities]);
   const countryOptions = useMemo(() => {
     const scoped = pendingContinent === all
       ? universities
       : universities.filter((university) => getContinent(university) === pendingContinent);
 
     return [all, ...unique(scoped.map((university) => university.country))];
-  }, [pendingContinent]);
+  }, [universities, pendingContinent]);
   const filteredUniversities = useMemo(
-    () => filterUniversities(appliedContinent, appliedCountry),
-    [appliedContinent, appliedCountry],
+    () => filterUniversities(universities, appliedContinent, appliedCountry),
+    [universities, appliedContinent, appliedCountry],
   );
   const pendingFilteredUniversities = useMemo(
-    () => filterUniversities(pendingContinent, pendingCountry),
-    [pendingContinent, pendingCountry],
+    () => filterUniversities(universities, pendingContinent, pendingCountry),
+    [universities, pendingContinent, pendingCountry],
   );
   const searchResults = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -63,7 +64,7 @@ function Index() {
     return universities
       .filter((university) => `${university.name} ${university.city} ${university.country}`.toLowerCase().includes(query))
       .slice(0, 5);
-  }, [searchQuery]);
+  }, [universities, searchQuery]);
   const selected = useMemo(() => filteredUniversities.find((item) => item.id === selectedId), [filteredUniversities, selectedId]);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -296,8 +297,8 @@ function getAnchoredPanelStyle(point?: { x: number; y: number }): CSSProperties 
   } as CSSProperties;
 }
 
-function filterUniversities(continent: string, country: string) {
-  return universities.filter((university) => (
+function filterUniversities(items: University[], continent: string, country: string) {
+  return items.filter((university) => (
     (continent === all || getContinent(university) === continent) &&
     (country === all || university.country === country)
   ));

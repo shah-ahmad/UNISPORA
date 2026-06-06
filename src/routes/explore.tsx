@@ -1,13 +1,13 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Filter, Search } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { GlobeMap } from "@/components/globe/GlobeMap";
 import { UniversityDetailsPanel } from "@/components/globe/UniversityDetailsPanel";
-import { universities } from "@/data/universities";
-import type { University } from "@/data/universities";
+import type { University } from "@/types/university";
 import { useAppTheme } from "@/components/layout/theme";
+import { useUniversities } from "@/hooks/useUniversities";
 
 export const Route = createFileRoute("/explore")({
   component: Explore,
@@ -16,6 +16,7 @@ export const Route = createFileRoute("/explore")({
 const all = "All";
 
 function Explore() {
+  const { universities } = useUniversities();
   const [query, setQuery] = useState("");
   const [continent, setContinent] = useState(all);
   const [country, setCountry] = useState(all);
@@ -23,9 +24,15 @@ function Explore() {
   const [language, setLanguage] = useState(all);
   const [tuition, setTuition] = useState(70000);
   const [scholarships, setScholarships] = useState(false);
-  const [selected, setSelected] = useState<University | undefined>(universities[0]);
+  const [selected, setSelected] = useState<University>();
   const [selectedPoint, setSelectedPoint] = useState<{ x: number; y: number }>();
   const { theme } = useAppTheme();
+
+  useEffect(() => {
+    if (universities[0] && (!selected || !universities.some((university) => university.id === selected.id))) {
+      setSelected(universities[0]);
+    }
+  }, [selected, universities]);
 
   const filtered = useMemo(() => {
     return universities.filter((university) => {
@@ -40,7 +47,7 @@ function Explore() {
         (!scholarships || university.scholarships.length > 0)
       );
     });
-  }, [query, continent, country, program, language, tuition, scholarships]);
+  }, [universities, query, continent, country, program, language, tuition, scholarships]);
 
   return (
     <AppShell>

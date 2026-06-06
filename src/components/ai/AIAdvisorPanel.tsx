@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Send, Sparkles } from "lucide-react";
 import { useState } from "react";
-import type { University } from "@/data/universities";
+import type { University } from "@/types/university";
 import { GlassCard } from "@/components/ui/GlassCard";
 
 const chips = [
@@ -12,14 +12,14 @@ const chips = [
   "What are the admission requirements?",
 ];
 
-export function AIAdvisorPanel({ university }: { university: University }) {
+export function AIAdvisorPanel({ university, loading = false }: { university?: University; loading?: boolean }) {
   const [messages, setMessages] = useState([
-    { role: "assistant", text: `I can help with ${university.name}. I will use UniSpora's stored university data first, then point you to official sources when details may change.` },
+    { role: "assistant", text: "I can help with your selected university. I will use UniSpora's stored university data first, then point you to official sources when details may change." },
   ]);
   const [input, setInput] = useState("");
 
   const send = (text: string) => {
-    if (!text.trim()) return;
+    if (!text.trim() || !university) return;
     setMessages((current) => [
       ...current,
       { role: "user", text },
@@ -35,9 +35,13 @@ export function AIAdvisorPanel({ university }: { university: University }) {
         <h1 className="mt-4 font-serif text-4xl text-[#fff4df]">University guidance, grounded in your shortlist.</h1>
         <div className="mt-5 rounded-[8px] border border-white/10 bg-black/20 p-4">
           <span className="text-xs uppercase tracking-[0.18em] text-[#ae9f89]">Selected context</span>
-          <h2 className="mt-2 text-xl font-semibold text-[#fff6e7]">{university.name}</h2>
-          <p className="mt-1 text-sm text-[#d7ccbb]">{university.city}, {university.country}</p>
-          <p className="mt-3 text-sm text-[#d7ccbb]">{university.programs.join(", ")}</p>
+          <h2 className="mt-2 text-xl font-semibold text-[#fff6e7]">{university?.name ?? (loading ? "Loading Appwrite data..." : "No university selected")}</h2>
+          {university ? (
+            <>
+              <p className="mt-1 text-sm text-[#d7ccbb]">{university.city}, {university.country}</p>
+              <p className="mt-3 text-sm text-[#d7ccbb]">{university.programs.join(", ")}</p>
+            </>
+          ) : null}
         </div>
         <div className="mt-5 grid gap-2">
           {chips.map((chip) => (
@@ -54,7 +58,11 @@ export function AIAdvisorPanel({ university }: { university: University }) {
         </div>
         <div className="mt-4 rounded-[8px] border border-white/10 bg-black/20 p-4">
           <p className="mb-3 text-xs uppercase tracking-[0.18em] text-[#ae9f89]">Official source links</p>
-          <a href={university.website} target="_blank" rel="noreferrer" className="text-sm text-[#ffd493] underline-offset-4 hover:underline">{university.website}</a>
+          {university ? (
+            <a href={university.website} target="_blank" rel="noreferrer" className="text-sm text-[#ffd493] underline-offset-4 hover:underline">{university.website}</a>
+          ) : (
+            <span className="text-sm text-[#d7ccbb]">Connect to Appwrite to load official links.</span>
+          )}
         </div>
         <form
           className="mt-4 flex gap-3"
@@ -64,7 +72,7 @@ export function AIAdvisorPanel({ university }: { university: University }) {
           }}
         >
           <input className="lux-input flex-1" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Ask about tuition, language, admissions, or scholarships..." />
-          <button className="icon-send" type="submit" aria-label="Send message"><Send size={18} /></button>
+          <button className="icon-send" type="submit" aria-label="Send message" disabled={!university}><Send size={18} /></button>
         </form>
       </GlassCard>
     </section>

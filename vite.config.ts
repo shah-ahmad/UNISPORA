@@ -6,6 +6,15 @@ import path from "node:path";
 
 export default defineConfig({
   plugins: [TanStackRouterVite({ target: "react", autoCodeSplitting: true }), react(), tailwindcss()],
+  server: {
+    proxy: {
+      "/appwrite": {
+        target: "https://fra.cloud.appwrite.io",
+        changeOrigin: true,
+        rewrite: (pathName) => pathName.replace(/^\/appwrite/, ""),
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),

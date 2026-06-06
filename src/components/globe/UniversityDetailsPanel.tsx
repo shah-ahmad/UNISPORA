@@ -13,7 +13,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import type { University } from "@/data/universities";
+import type { University } from "@/types/university";
 import { GlassCard } from "@/components/ui/GlassCard";
 
 export function UniversityDetailsPanel({

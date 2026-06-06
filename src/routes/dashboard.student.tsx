@@ -1,13 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/layout/AppShell";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { universities } from "@/data/universities";
+import { useUniversities } from "@/hooks/useUniversities";
 
 export const Route = createFileRoute("/dashboard/student")({
   component: StudentDashboard,
 });
 
 function StudentDashboard() {
+  const { universities } = useUniversities();
+
   return (
     <AppShell>
       <Dashboard title="Student dashboard" subtitle="Your saved universities, AI chats, bookings, and application progress.">
