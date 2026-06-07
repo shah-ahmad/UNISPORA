@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ExploreRouteImport } from './routes/explore'
@@ -19,6 +20,11 @@ import { Route as DashboardStudentRouteImport } from './routes/dashboard.student
 import { Route as DashboardConsultantRouteImport } from './routes/dashboard.consultant'
 import { Route as ConsultantsConsultantIdRouteImport } from './routes/consultants.$consultantId'
 
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/verify': typeof VerifyRoute
   '/consultants/$consultantId': typeof ConsultantsConsultantIdRoute
   '/dashboard/consultant': typeof DashboardConsultantRoute
   '/dashboard/student': typeof DashboardStudentRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/verify': typeof VerifyRoute
   '/consultants/$consultantId': typeof ConsultantsConsultantIdRoute
   '/dashboard/consultant': typeof DashboardConsultantRoute
   '/dashboard/student': typeof DashboardStudentRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/verify': typeof VerifyRoute
   '/consultants/$consultantId': typeof ConsultantsConsultantIdRoute
   '/dashboard/consultant': typeof DashboardConsultantRoute
   '/dashboard/student': typeof DashboardStudentRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/login'
     | '/signup'
+    | '/verify'
     | '/consultants/$consultantId'
     | '/dashboard/consultant'
     | '/dashboard/student'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/login'
     | '/signup'
+    | '/verify'
     | '/consultants/$consultantId'
     | '/dashboard/consultant'
     | '/dashboard/student'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/login'
     | '/signup'
+    | '/verify'
     | '/consultants/$consultantId'
     | '/dashboard/consultant'
     | '/dashboard/student'
@@ -141,6 +153,7 @@ export interface RootRouteChildren {
   ExploreRoute: typeof ExploreRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  VerifyRoute: typeof VerifyRoute
   ConsultantsConsultantIdRoute: typeof ConsultantsConsultantIdRoute
   DashboardConsultantRoute: typeof DashboardConsultantRoute
   DashboardStudentRoute: typeof DashboardStudentRoute
@@ -149,6 +162,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -221,6 +241,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreRoute: ExploreRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  VerifyRoute: VerifyRoute,
   ConsultantsConsultantIdRoute: ConsultantsConsultantIdRoute,
   DashboardConsultantRoute: DashboardConsultantRoute,
   DashboardStudentRoute: DashboardStudentRoute,

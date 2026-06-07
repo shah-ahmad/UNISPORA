@@ -31,7 +31,7 @@ export function Auth({
   onSuccess?: () => void;
 }) {
   const navigate = useNavigate();
-  const { login, signup: createAccount } = useAuth();
+  const { login, signup: createAccount, signInWithGoogle } = useAuth();
   const [role, setRole] = useState<AuthRole>("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,9 +49,14 @@ export function Auth({
 
     setSubmitting(true);
     try {
-      const user = signup
-        ? await createAccount(email.trim(), password, role)
-        : await login(email.trim(), password);
+      if (signup) {
+        await createAccount(email.trim(), password, role);
+        setPassword("");
+        setMessage("Account created. We sent a verification email to your inbox.");
+        return;
+      }
+
+      const user = await login(email.trim(), password);
       const destination = user.prefs?.role === "consultant" ? "/dashboard/consultant" : "/dashboard/student";
       onSuccess?.();
       await navigate({ to: destination });
@@ -76,6 +81,11 @@ export function Auth({
         <input className="lux-input" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete={signup ? "new-password" : "current-password"} type="password" minLength={8} />
         {message ? <p className="auth-message">{message}</p> : null}
         <button className="panel-action primary justify-center" type="submit" disabled={submitting}>{submitting ? "Please wait..." : action}</button>
+        <div className="auth-divider"><span>or</span></div>
+        <button className="google-auth-button" type="button" onClick={signInWithGoogle}>
+          <span>G</span>
+          Continue with Google
+        </button>
       </form>
     </div>
   );

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { Models } from "appwrite";
-import { account, ID } from "@/lib/appwrite";
+import { account, ID, OAuthProvider } from "@/lib/appwrite";
 
 type AuthRole = "student" | "consultant";
 type UniSporaPreferences = Models.Preferences & {
@@ -12,6 +12,9 @@ type AuthContextValue = {
   loading: boolean;
   login: (email: string, password: string) => Promise<Models.User<UniSporaPreferences>>;
   signup: (email: string, password: string, role: AuthRole) => Promise<Models.User<UniSporaPreferences>>;
+  sendVerificationEmail: () => Promise<void>;
+  verifyEmail: (userId: string, secret: string) => Promise<void>;
+  signInWithGoogle: () => void;
   logout: () => Promise<void>;
 };
 
@@ -53,9 +56,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await account.create(ID.unique(), email, password);
       await account.createEmailPasswordSession(email, password);
       await account.updatePrefs({ role });
+      await account.createEmailVerification({ url: `${window.location.origin}/verify` });
       const currentUser = await account.get() as Models.User<UniSporaPreferences>;
       setUser(currentUser);
       return currentUser;
+    },
+    async sendVerificationEmail() {
+      await account.createEmailVerification({ url: `${window.location.origin}/verify` });
+    },
+    async verifyEmail(userId, secret) {
+      await account.updateEmailVerification({ userId, secret });
+      const currentUser = await account.get() as Models.User<UniSporaPreferences>;
+      setUser(currentUser);
+    },
+    signInWithGoogle() {
+      account.createOAuth2Session({
+        provider: OAuthProvider.Google,
+        success: `${window.location.origin}/`,
+        failure: `${window.location.origin}/login`,
+        scopes: ["email", "profile"],
+      });
     },
     async logout() {
       await account.deleteSession("current");

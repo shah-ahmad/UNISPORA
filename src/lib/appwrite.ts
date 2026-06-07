@@ -1,4 +1,4 @@
-import { Account, Client, ID } from "appwrite";
+import { Account, Client, ID, OAuthProvider } from "appwrite";
 
 const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT ?? "https://fra.cloud.appwrite.io/v1";
 const projectId = import.meta.env.VITE_APPWRITE_PROJECT_ID ?? "6a2439e0003d1ec5dcd5";
@@ -16,4 +16,4 @@ export const appwriteClient = new Client()
   .setProject(projectId);
 
 export const account = new Account(appwriteClient);
-export { ID };
+export { ID, OAuthProvider };
