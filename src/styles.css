@@ -1369,7 +1369,7 @@ button.top-nav-link {
 
 .top-nav {
   height: 56px;
-  padding: 6px 10px;
+  padding: 6px 8px;
   gap: 0;
   border-radius: 999px;
 
@@ -1392,11 +1392,11 @@ button.top-nav-link {
 
 .top-nav-link {
   min-height: 44px;
-  padding: 0 23px;
-  gap: 10px;
+  padding: 0 17px;
+  gap: 8px;
 
   color: rgba(255, 246, 232, 0.95);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
 
   border-right: 1px solid rgba(255, 255, 255, 0.14);
