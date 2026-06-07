@@ -1144,6 +1144,43 @@ button.top-nav-link {
   overflow-wrap: anywhere;
 }
 
+.account-field {
+  display: grid;
+  gap: 8px;
+  color: rgba(255, 244, 223, 0.68);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.bookmarks-page {
+  min-height: calc(100vh - 120px);
+  display: grid;
+  place-items: center;
+  padding: 48px 24px;
+}
+
+.bookmarks-panel {
+  width: min(460px, calc(100vw - 48px));
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+  padding: 34px;
+  color: #fff4df;
+}
+
+.bookmarks-panel h1 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 42px;
+}
+
+.bookmarks-panel p {
+  margin: 0;
+  color: rgba(255, 244, 223, 0.72);
+}
+
 .mapboxgl-popup {
   z-index: 70 !important;
 }
@@ -1464,11 +1501,11 @@ button.top-nav-link {
 
 .top-nav-link {
   min-height: 44px;
-  padding: 0 17px;
-  gap: 8px;
+  padding: 0 14px;
+  gap: 7px;
 
   color: rgba(255, 246, 232, 0.95);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
 
   border-right: 1px solid rgba(255, 255, 255, 0.14);

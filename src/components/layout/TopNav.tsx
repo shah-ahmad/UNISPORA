@@ -1,10 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, LogIn, LogOut, Search, Sparkles, User, UserPlus, Compass } from "lucide-react";
+import { Bookmark, Home, LogIn, Search, Sparkles, User, UserPlus, Compass } from "lucide-react";
 
 const navItems = [
   { label: "Home", to: "/", icon: Home },
   { label: "Explore", to: "/explore", icon: Compass },
   { label: "Search", to: "/explore", icon: Search, action: "search" },
+  { label: "Bookmarks", to: "/bookmarks", icon: Bookmark },
   { label: "AI Advisor", to: "/ai-advisor", icon: Sparkles },
   { label: "Login", to: "/login", icon: LogIn, action: "login" },
   { label: "Sign Up", to: "/signup", icon: UserPlus, action: "signup" },
@@ -16,7 +17,6 @@ export function TopNav({
   onSignupClick,
   userLabel,
   onAccountClick,
-  onSignOut,
   activeAction,
 }: {
   onSearchClick?: () => void;
@@ -24,7 +24,6 @@ export function TopNav({
   onSignupClick?: () => void;
   userLabel?: string;
   onAccountClick?: () => void;
-  onSignOut?: () => void;
   activeAction?: "login" | "signup";
 }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
@@ -52,12 +51,7 @@ export function TopNav({
           );
         }
         if (item.action === "signup" && userLabel) {
-          return (
-            <button key={item.label} type="button" className="top-nav-link" onClick={onSignOut}>
-              <LogOut size={17} />
-              <span>Sign Out</span>
-            </button>
-          );
+          return null;
         }
         if (item.action === "login" && onLoginClick) {
           return (

@@ -15,6 +15,7 @@ type AuthContextValue = {
   sendVerificationEmail: () => Promise<void>;
   verifyEmail: (userId: string, secret: string) => Promise<void>;
   signInWithGoogle: () => void;
+  updateUsername: (name: string) => Promise<Models.User<UniSporaPreferences>>;
   logout: () => Promise<void>;
 };
 
@@ -76,6 +77,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         failure: `${window.location.origin}/login`,
         scopes: ["email", "profile"],
       });
+    },
+    async updateUsername(name) {
+      const currentUser = await account.updateName(name);
+      setUser(currentUser as Models.User<UniSporaPreferences>);
+      return currentUser as Models.User<UniSporaPreferences>;
     },
     async logout() {
       await account.deleteSession("current");

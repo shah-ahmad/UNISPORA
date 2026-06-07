@@ -32,7 +32,7 @@ export function Auth({
   onSuccess?: () => void;
 }) {
   const navigate = useNavigate();
-  const { user, login, signup: createAccount, signInWithGoogle, logout } = useAuth();
+  const { user, login, signup: createAccount, signInWithGoogle } = useAuth();
   const userLabel = user?.name || user?.email?.split("@")[0] || "UniSpora user";
   const [role, setRole] = useState<AuthRole>("student");
   const [email, setEmail] = useState("");
@@ -72,13 +72,7 @@ export function Auth({
   return (
     <div className="auth-wrap">
       {user ? (
-        <div className="auth-card account-card">
-          <h1>{userLabel}</h1>
-          <p className="account-email">{user.email}</p>
-          <button className="panel-action primary justify-center" type="button" onClick={() => void logout()}>
-            <LogOut size={17} /> Sign Out
-          </button>
-        </div>
+        <AccountCard name={userLabel} email={user.email} />
       ) : (
         <form className="auth-card" onSubmit={submit}>
         <h1>{title}</h1>
@@ -99,6 +93,55 @@ export function Auth({
         </button>
         </form>
       )}
+    </div>
+  );
+}
+
+export function AccountCard({ name, email, onSignedOut }: { name: string; email: string; onSignedOut?: () => void }) {
+  const { updateUsername, logout } = useAuth();
+  const [username, setUsername] = useState(name);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function saveUsername() {
+    const nextName = username.trim();
+    if (!nextName) {
+      setMessage("Enter a username first.");
+      return;
+    }
+
+    setSaving(true);
+    setMessage("");
+    try {
+      await updateUsername(nextName);
+      setMessage("Username updated.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not update username.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function signOut() {
+    await logout();
+    onSignedOut?.();
+  }
+
+  return (
+    <div className="auth-card account-card">
+      <h1>{name}</h1>
+      <p className="account-email">{email}</p>
+      <label className="account-field">
+        <span>Username</span>
+        <input className="lux-input" value={username} onChange={(event) => setUsername(event.target.value)} />
+      </label>
+      {message ? <p className="auth-message">{message}</p> : null}
+      <button className="panel-action primary justify-center" type="button" onClick={saveUsername} disabled={saving}>
+        {saving ? "Saving..." : "Update username"}
+      </button>
+      <button className="google-auth-button" type="button" onClick={() => void signOut()}>
+        <LogOut size={17} /> Sign Out
+      </button>
     </div>
   );
 }

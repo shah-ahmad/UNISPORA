@@ -13,6 +13,7 @@ import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as AiAdvisorRouteImport } from './routes/ai-advisor'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ConsultantsIndexRouteImport } from './routes/consultants.index'
@@ -38,6 +39,11 @@ const LoginRoute = LoginRouteImport.update({
 const ExploreRoute = ExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookmarksRoute = BookmarksRouteImport.update({
+  id: '/bookmarks',
+  path: '/bookmarks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AiAdvisorRoute = AiAdvisorRouteImport.update({
@@ -74,6 +80,7 @@ const ConsultantsConsultantIdRoute = ConsultantsConsultantIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai-advisor': typeof AiAdvisorRoute
+  '/bookmarks': typeof BookmarksRoute
   '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai-advisor': typeof AiAdvisorRoute
+  '/bookmarks': typeof BookmarksRoute
   '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ai-advisor': typeof AiAdvisorRoute
+  '/bookmarks': typeof BookmarksRoute
   '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ai-advisor'
+    | '/bookmarks'
     | '/explore'
     | '/login'
     | '/signup'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/ai-advisor'
+    | '/bookmarks'
     | '/explore'
     | '/login'
     | '/signup'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/ai-advisor'
+    | '/bookmarks'
     | '/explore'
     | '/login'
     | '/signup'
@@ -150,6 +162,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AiAdvisorRoute: typeof AiAdvisorRoute
+  BookmarksRoute: typeof BookmarksRoute
   ExploreRoute: typeof ExploreRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       path: '/explore'
       fullPath: '/explore'
       preLoaderRoute: typeof ExploreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookmarks': {
+      id: '/bookmarks'
+      path: '/bookmarks'
+      fullPath: '/bookmarks'
+      preLoaderRoute: typeof BookmarksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ai-advisor': {
@@ -238,6 +258,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AiAdvisorRoute: AiAdvisorRoute,
+  BookmarksRoute: BookmarksRoute,
   ExploreRoute: ExploreRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
