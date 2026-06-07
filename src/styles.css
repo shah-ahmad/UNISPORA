@@ -348,7 +348,7 @@ button.top-nav-link {
 }
 
 .home-nav-slot {
-  width: 760px;
+  width: fit-content;
   max-width: calc(100vw - 360px);
 }
 
@@ -356,7 +356,8 @@ button.top-nav-link {
   position: relative;
   z-index: 58;
   display: grid;
-  width: 100%;
+  width: 760px;
+  max-width: calc(100vw - 360px);
   gap: 10px;
   transform-origin: center top;
   animation: searchExpandShell 0.34s cubic-bezier(0.2, 0.82, 0.2, 1) both;
