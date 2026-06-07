@@ -6,18 +6,14 @@ import { useAuth } from "@/hooks/useAuth";
 
 export function AppShell({ children, showLogo = true }: { children: ReactNode; showLogo?: boolean }) {
   const { user, logout } = useAuth();
+  const userLabel = user?.name || user?.email?.split("@")[0];
 
   return (
     <main className="app-shell min-h-screen">
       <div className="relative z-40 mx-auto flex w-full max-w-[1660px] items-center justify-between px-5 py-5 lg:px-10">
         {showLogo ? <BrandLogo compact /> : <span />}
-        <TopNav />
+        <TopNav userLabel={userLabel} onSignOut={() => void logout()} />
         <div className="app-shell-actions">
-          {user ? (
-            <button className="session-pill" type="button" onClick={() => void logout()} title="Sign out">
-              {user.email}
-            </button>
-          ) : null}
           <ThemeToggle />
         </div>
       </div>

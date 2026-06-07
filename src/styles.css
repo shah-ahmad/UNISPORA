@@ -1119,6 +1119,31 @@ button.top-nav-link {
   white-space: nowrap;
 }
 
+.session-nav-link {
+  max-width: 180px;
+}
+
+.session-nav-link span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-card {
+  gap: 18px;
+}
+
+.account-card h1 {
+  overflow-wrap: anywhere;
+}
+
+.account-email {
+  margin: -4px 0 4px;
+  color: rgba(255, 244, 223, 0.76);
+  font-size: 15px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 .mapboxgl-popup {
   z-index: 70 !important;
 }

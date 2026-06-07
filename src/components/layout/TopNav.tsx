@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, LogIn, Search, Sparkles, UserPlus, Compass } from "lucide-react";
+import { Home, LogIn, LogOut, Search, Sparkles, User, UserPlus, Compass } from "lucide-react";
 
 const navItems = [
   { label: "Home", to: "/", icon: Home },
@@ -14,11 +14,17 @@ export function TopNav({
   onSearchClick,
   onLoginClick,
   onSignupClick,
+  userLabel,
+  onAccountClick,
+  onSignOut,
   activeAction,
 }: {
   onSearchClick?: () => void;
   onLoginClick?: () => void;
   onSignupClick?: () => void;
+  userLabel?: string;
+  onAccountClick?: () => void;
+  onSignOut?: () => void;
   activeAction?: "login" | "signup";
 }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
@@ -34,6 +40,22 @@ export function TopNav({
             <button key={item.label} type="button" className="top-nav-link" onClick={onSearchClick}>
               <Icon size={17} />
               <span>{item.label}</span>
+            </button>
+          );
+        }
+        if (item.action === "login" && userLabel) {
+          return (
+            <button key={item.label} type="button" className="top-nav-link session-nav-link" onClick={onAccountClick}>
+              <User size={17} />
+              <span>{userLabel}</span>
+            </button>
+          );
+        }
+        if (item.action === "signup" && userLabel) {
+          return (
+            <button key={item.label} type="button" className="top-nav-link" onClick={onSignOut}>
+              <LogOut size={17} />
+              <span>Sign Out</span>
             </button>
           );
         }

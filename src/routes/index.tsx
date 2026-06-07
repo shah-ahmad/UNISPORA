@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Check, ChevronDown, Filter, RotateCcw, Search, X } from "lucide-react";
+import { Check, ChevronDown, Filter, LogOut, RotateCcw, Search, X } from "lucide-react";
 import { GlobeMap } from "@/components/globe/GlobeMap";
 import { SidebarHero } from "@/components/layout/SidebarHero";
 import { TopNav } from "@/components/layout/TopNav";
@@ -10,6 +10,7 @@ import { Auth } from "@/routes/login";
 import type { University } from "@/types/university";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useAppTheme } from "@/components/layout/theme";
+import { useAuth } from "@/hooks/useAuth";
 import { useUniversities } from "@/hooks/useUniversities";
 
 export const Route = createFileRoute("/")({
@@ -23,10 +24,12 @@ type GlobeFocusTarget = {
   zoom: number;
   requestId: number;
 };
-type AuthMode = "login" | "signup";
+type AuthMode = "login" | "signup" | "account";
 
 function Index() {
   const { universities } = useUniversities();
+  const { user, logout } = useAuth();
+  const userLabel = user?.name || user?.email?.split("@")[0];
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>();
   const [searchOpen, setSearchOpen] = useState(false);
@@ -183,9 +186,12 @@ function Index() {
           ) : (
             <TopNav
               onSearchClick={() => setSearchOpen(true)}
-              onLoginClick={() => setAuthMode("login")}
+              onLoginClick={() => setAuthMode(user ? "account" : "login")}
               onSignupClick={() => setAuthMode("signup")}
-              activeAction={authMode}
+              userLabel={userLabel}
+              onAccountClick={() => setAuthMode("account")}
+              onSignOut={() => void logout()}
+              activeAction={authMode === "account" ? undefined : authMode}
             />
           )}
         </div>
@@ -270,22 +276,47 @@ function Index() {
           </div>
         ) : null}
         {authMode ? (
-          <div className="auth-modal-layer" role="dialog" aria-modal="true" aria-label={authMode === "login" ? "Login" : "Sign up"} onPointerDown={() => setAuthMode(undefined)}>
+          <div className="auth-modal-layer" role="dialog" aria-modal="true" aria-label={authMode === "account" ? "Account" : authMode === "login" ? "Login" : "Sign up"} onPointerDown={() => setAuthMode(undefined)}>
             <div className="auth-modal" onPointerDown={(event) => event.stopPropagation()}>
               <button className="details-close" type="button" aria-label="Close auth modal" onClick={() => setAuthMode(undefined)}>
                 <X size={18} />
               </button>
-              <Auth
-                title={authMode === "login" ? "Welcome back to UniSpora." : "Create your UniSpora account."}
-                action={authMode === "login" ? "Login" : "Sign Up"}
-                signup={authMode === "signup"}
-                onSuccess={() => setAuthMode(undefined)}
-              />
+              {authMode === "account" && user ? (
+                <AccountCard
+                  name={userLabel ?? "UniSpora user"}
+                  email={user.email}
+                  onSignOut={async () => {
+                    await logout();
+                    setAuthMode(undefined);
+                  }}
+                />
+              ) : (
+                <Auth
+                  title={authMode === "login" ? "Welcome back to UniSpora." : "Create your UniSpora account."}
+                  action={authMode === "login" ? "Login" : "Sign Up"}
+                  signup={authMode === "signup"}
+                  onSuccess={() => setAuthMode(undefined)}
+                />
+              )}
             </div>
           </div>
         ) : null}
       </section>
     </main>
+  );
+}
+
+function AccountCard({ name, email, onSignOut }: { name: string; email: string; onSignOut: () => Promise<void> }) {
+  return (
+    <div className="auth-wrap">
+      <div className="auth-card account-card">
+        <h1>{name}</h1>
+        <p className="account-email">{email}</p>
+        <button className="panel-action primary justify-center" type="button" onClick={() => void onSignOut()}>
+          <LogOut size={17} /> Sign Out
+        </button>
+      </div>
+    </div>
   );
 }
 

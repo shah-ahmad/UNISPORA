@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { LogOut } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -31,7 +32,8 @@ export function Auth({
   onSuccess?: () => void;
 }) {
   const navigate = useNavigate();
-  const { login, signup: createAccount, signInWithGoogle } = useAuth();
+  const { user, login, signup: createAccount, signInWithGoogle, logout } = useAuth();
+  const userLabel = user?.name || user?.email?.split("@")[0] || "UniSpora user";
   const [role, setRole] = useState<AuthRole>("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -69,7 +71,16 @@ export function Auth({
 
   return (
     <div className="auth-wrap">
-      <form className="auth-card" onSubmit={submit}>
+      {user ? (
+        <div className="auth-card account-card">
+          <h1>{userLabel}</h1>
+          <p className="account-email">{user.email}</p>
+          <button className="panel-action primary justify-center" type="button" onClick={() => void logout()}>
+            <LogOut size={17} /> Sign Out
+          </button>
+        </div>
+      ) : (
+        <form className="auth-card" onSubmit={submit}>
         <h1>{title}</h1>
         {signup ? (
           <div className="role-choice">
@@ -86,7 +97,8 @@ export function Auth({
           <span>G</span>
           Continue with Google
         </button>
-      </form>
+        </form>
+      )}
     </div>
   );
 }
