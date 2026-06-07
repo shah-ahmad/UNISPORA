@@ -61,6 +61,31 @@ export async function reserveUsername(username: string, data: Omit<UsernameReser
   return normalized;
 }
 
+export async function reserveAutomaticUsername(email: string, data: Omit<UsernameReservation, "username"> = {}) {
+  const emailPrefix = email.split("@")[0] ?? "user";
+  const baseUsername = normalizeUsername(emailPrefix) || "user";
+  const compactBase = baseUsername.slice(0, 30);
+
+  for (let index = 0; index < 50; index += 1) {
+    const candidate = index === 0 ? compactBase : `${compactBase}-${index + 1}`;
+
+    try {
+      return await reserveUsername(candidate, {
+        email,
+        ...data,
+      });
+    } catch (error) {
+      if (error instanceof Error && error.message === "That username is already taken.") {
+        continue;
+      }
+
+      throw error;
+    }
+  }
+
+  throw new Error("Could not create a unique username. Try again.");
+}
+
 export async function releaseUsername(username: string) {
   const normalized = normalizeUsername(username);
   if (!normalized) return;

@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { Models } from "appwrite";
 import { account, ID, OAuthProvider } from "@/lib/appwrite";
-import { normalizeUsername, releaseUsername, reserveUsername } from "@/lib/usernames";
+import { normalizeUsername, releaseUsername, reserveAutomaticUsername, reserveUsername } from "@/lib/usernames";
 
 type AuthRole = "student" | "consultant";
 type UniSporaPreferences = Models.Preferences & {
@@ -12,7 +12,7 @@ type AuthContextValue = {
   user?: Models.User<UniSporaPreferences>;
   loading: boolean;
   login: (email: string, password: string) => Promise<Models.User<UniSporaPreferences>>;
-  signup: (email: string, password: string, role: AuthRole, username: string) => Promise<Models.User<UniSporaPreferences>>;
+  signup: (email: string, password: string, role: AuthRole) => Promise<Models.User<UniSporaPreferences>>;
   sendVerificationEmail: () => Promise<void>;
   verifyEmail: (userId: string, secret: string) => Promise<void>;
   signInWithGoogle: () => void;
@@ -54,8 +54,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(currentUser);
       return currentUser;
     },
-    async signup(email, password, role, username) {
-      const reservedUsername = await reserveUsername(username, { email });
+    async signup(email, password, role) {
+      const reservedUsername = await reserveAutomaticUsername(email);
       try {
         await account.create({ userId: ID.unique(), email, password, name: reservedUsername });
       } catch (error) {

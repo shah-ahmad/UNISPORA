@@ -35,7 +35,6 @@ export function Auth({
   const { user, login, signup: createAccount, signInWithGoogle } = useAuth();
   const userLabel = user?.name || user?.email?.split("@")[0] || "UniSpora user";
   const [role, setRole] = useState<AuthRole>("student");
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -45,11 +44,6 @@ export function Auth({
     event.preventDefault();
     setMessage("");
 
-    if (signup && !username.trim()) {
-      setMessage("Choose a unique username.");
-      return;
-    }
-
     if (!email.trim() || !password) {
       setMessage("Enter your email and password.");
       return;
@@ -58,7 +52,7 @@ export function Auth({
     setSubmitting(true);
     try {
       if (signup) {
-        await createAccount(email.trim(), password, role, username);
+        await createAccount(email.trim(), password, role);
         setPassword("");
         setMessage("Account created. We sent a verification email to your inbox.");
         return;
@@ -87,9 +81,6 @@ export function Auth({
             <button className={role === "student" ? "active" : ""} type="button" onClick={() => setRole("student")}>I am a student</button>
             <button className={role === "consultant" ? "active" : ""} type="button" onClick={() => setRole("consultant")}>I am a consultant</button>
           </div>
-        ) : null}
-        {signup ? (
-          <input className="lux-input" placeholder="Unique username" value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" minLength={3} />
         ) : null}
         <input className="lux-input" placeholder="Email address" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" type="email" />
         <input className="lux-input" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete={signup ? "new-password" : "current-password"} type="password" minLength={8} />

@@ -13,7 +13,7 @@ The project is a Vite + React application with TanStack Router, Mapbox GL, custo
 - Search suggestions for universities with Enter-to-focus behavior
 - Light and dark globe modes while the rest of the UI remains visually consistent
 - Login and sign-up glass modals over the globe
-- Appwrite email/password auth, email verification, Google sign-in, and unique username reservations
+- Appwrite email/password auth, email verification, Google sign-in, automatic unique usernames, and editable account names
 - AI advisor page for university guidance
 - Consultant listing and consultant profile views
 - Student and consultant dashboard mockups
@@ -121,7 +121,7 @@ Create a `usernames` collection in the `unispora` database with these attributes
 - `email`: string, optional, size 128
 - `userId`: string, optional, size 64
 
-Each username is stored as the document ID, so Appwrite rejects duplicates. The app reserves the username before creating the Auth user; if the reservation fails, account creation does not continue.
+Each username is stored as the document ID, so Appwrite rejects duplicates. During sign-up, the app automatically reserves a unique username from the email prefix before creating the Auth user; after verification, the user can change the username from the account panel.
 
 ## Repository
 
