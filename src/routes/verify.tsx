@@ -18,19 +18,18 @@ function VerifyEmail() {
     verificationStarted.current = true;
 
     const params = new URLSearchParams(window.location.search);
-    const userId = params.get("userId");
-    const secret = params.get("secret");
+    const token = params.get("token");
 
-    if (!userId || !secret) {
+    if (!token) {
       setStatus("error");
       setMessage("This verification link is missing the required details.");
       return;
     }
 
-    verifyEmail(userId, secret)
+    verifyEmail(token)
       .then(() => {
         setStatus("success");
-        setMessage("Your email has been verified. You can continue using UniSpora.");
+        setMessage("Your email has been verified. You can now log in to UniSpora.");
       })
       .catch((error) => {
         setStatus("error");

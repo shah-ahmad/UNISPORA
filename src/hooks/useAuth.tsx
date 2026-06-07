@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { Models } from "appwrite";
 import { account, ID, OAuthProvider } from "@/lib/appwrite";
 import { normalizeUsername, releaseUsername, reserveAutomaticUsername, reserveUsername } from "@/lib/usernames";
+import { sendVerificationEmail as sendUniSporaVerificationEmail, verifyEmailToken } from "@/lib/verification";
 
 type AuthRole = "student" | "consultant";
 type UniSporaPreferences = Models.Preferences & {
@@ -14,7 +15,7 @@ type AuthContextValue = {
   login: (email: string, password: string) => Promise<Models.User<UniSporaPreferences>>;
   signup: (email: string, password: string, role: AuthRole) => Promise<Models.User<UniSporaPreferences>>;
   sendVerificationEmail: () => Promise<void>;
-  verifyEmail: (userId: string, secret: string) => Promise<void>;
+  verifyEmail: (token: string) => Promise<void>;
   signInWithGoogle: () => void;
   updateUsername: (name: string) => Promise<Models.User<UniSporaPreferences>>;
   logout: () => Promise<void>;
@@ -58,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await account.createEmailPasswordSession(email, password);
       const currentUser = await account.get() as Models.User<UniSporaPreferences>;
       if (!currentUser.emailVerification) {
-        await account.createEmailVerification({ url: `${window.location.origin}/verify` });
+        await sendUniSporaVerificationEmail(currentUser.$id, currentUser.email);
         await account.deleteSession("current");
         setUser(undefined);
         throw new Error("Please verify your email first. We sent a new verification link.");
@@ -77,23 +78,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       await account.createEmailPasswordSession(email, password);
       await account.updatePrefs({ role });
-      await account.createEmailVerification({ url: `${window.location.origin}/verify` });
       const currentUser = await account.get() as Models.User<UniSporaPreferences>;
+      await sendUniSporaVerificationEmail(currentUser.$id, currentUser.email);
       await account.deleteSession("current");
       setUser(undefined);
       return currentUser;
     },
     async sendVerificationEmail() {
-      await account.createEmailVerification({ url: `${window.location.origin}/verify` });
+      const currentUser = await account.get() as Models.User<UniSporaPreferences>;
+      await sendUniSporaVerificationEmail(currentUser.$id, currentUser.email);
     },
-    async verifyEmail(userId, secret) {
-      await account.updateEmailVerification({ userId, secret });
-      try {
-        const currentUser = await account.get() as Models.User<UniSporaPreferences>;
-        setUser(currentUser);
-      } catch {
-        setUser(undefined);
-      }
+    async verifyEmail(token) {
+      await verifyEmailToken(token);
+      setUser(undefined);
     },
     signInWithGoogle() {
       account.createOAuth2Session({
