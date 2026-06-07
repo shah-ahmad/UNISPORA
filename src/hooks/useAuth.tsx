@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { Models } from "appwrite";
 import { account, ID, OAuthProvider } from "@/lib/appwrite";
+import { normalizeUsername, releaseUsername, reserveUsername } from "@/lib/usernames";
 
 type AuthRole = "student" | "consultant";
 type UniSporaPreferences = Models.Preferences & {
@@ -11,7 +12,7 @@ type AuthContextValue = {
   user?: Models.User<UniSporaPreferences>;
   loading: boolean;
   login: (email: string, password: string) => Promise<Models.User<UniSporaPreferences>>;
-  signup: (email: string, password: string, role: AuthRole) => Promise<Models.User<UniSporaPreferences>>;
+  signup: (email: string, password: string, role: AuthRole, username: string) => Promise<Models.User<UniSporaPreferences>>;
   sendVerificationEmail: () => Promise<void>;
   verifyEmail: (userId: string, secret: string) => Promise<void>;
   signInWithGoogle: () => void;
@@ -53,8 +54,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(currentUser);
       return currentUser;
     },
-    async signup(email, password, role) {
-      await account.create(ID.unique(), email, password);
+    async signup(email, password, role, username) {
+      const reservedUsername = await reserveUsername(username, { email });
+      try {
+        await account.create({ userId: ID.unique(), email, password, name: reservedUsername });
+      } catch (error) {
+        releaseUsername(reservedUsername).catch(() => undefined);
+        throw error;
+      }
       await account.createEmailPasswordSession(email, password);
       await account.updatePrefs({ role });
       await account.createEmailVerification({ url: `${window.location.origin}/verify` });
@@ -79,8 +86,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
     },
     async updateUsername(name) {
-      const currentUser = await account.updateName(name);
+      const oldUsername = normalizeUsername(user?.name ?? "");
+      const requestedUsername = normalizeUsername(name);
+      if (oldUsername && oldUsername === requestedUsername) {
+        const currentUser = await account.updateName(oldUsername);
+        setUser(currentUser as Models.User<UniSporaPreferences>);
+        return currentUser as Models.User<UniSporaPreferences>;
+      }
+
+      const newUsername = await reserveUsername(name, {
+        email: user?.email,
+        userId: user?.$id,
+      });
+      const currentUser = await account.updateName(newUsername);
       setUser(currentUser as Models.User<UniSporaPreferences>);
+      if (oldUsername && oldUsername !== newUsername) {
+        releaseUsername(oldUsername).catch(() => undefined);
+      }
       return currentUser as Models.User<UniSporaPreferences>;
     },
     async logout() {

@@ -2,7 +2,7 @@
 
 UniSpora is an interactive university discovery interface built around a cinematic Mapbox globe. It helps students explore universities by region, country, programs, scholarships, language, and location through a polished glassmorphism UI.
 
-The project is a Vite + React application with TanStack Router, Mapbox GL, custom UI components, and a curated university dataset.
+The project is a Vite + React application with TanStack Router, Mapbox GL, custom UI components, Appwrite Auth, and Appwrite-backed university data.
 
 ## Features
 
@@ -13,6 +13,7 @@ The project is a Vite + React application with TanStack Router, Mapbox GL, custo
 - Search suggestions for universities with Enter-to-focus behavior
 - Light and dark globe modes while the rest of the UI remains visually consistent
 - Login and sign-up glass modals over the globe
+- Appwrite email/password auth, email verification, Google sign-in, and unique username reservations
 - AI advisor page for university guidance
 - Consultant listing and consultant profile views
 - Student and consultant dashboard mockups
@@ -39,7 +40,7 @@ src/
     layout/             App shell, top nav, branding, theme controls
     ui/                 Shared glass UI primitives
   data/
-    universities.ts     University dataset
+    appwriteUniversities.ts  Appwrite university data loader
     consultants.ts      Consultant dataset
   routes/               TanStack Router pages
   styles.css            Global UI, glass, modal, map, and responsive styles
@@ -61,10 +62,15 @@ Create a local environment file:
 cp .env.example .env.local
 ```
 
-Add your Mapbox token:
+Add your Mapbox and Appwrite settings:
 
 ```env
 VITE_MAPBOX_TOKEN=your_mapbox_token_here
+VITE_APPWRITE_ENDPOINT=https://fra.cloud.appwrite.io/v1
+VITE_APPWRITE_PROJECT_ID=your_appwrite_project_id
+VITE_APPWRITE_DATABASE_ID=unispora
+VITE_APPWRITE_UNIVERSITIES_COLLECTION_ID=universities
+VITE_APPWRITE_USERNAMES_COLLECTION_ID=usernames
 ```
 
 `.env.local` is intentionally ignored by Git so secrets are not pushed to GitHub.
@@ -104,8 +110,18 @@ Create a production build.
 ## Notes
 
 - The Mapbox token must be provided through `VITE_MAPBOX_TOKEN`.
+- The `usernames` Appwrite collection is used to reserve unique usernames before account creation.
 - Build output, local env files, generated Vite artifacts, and dependencies are ignored through `.gitignore`.
-- The current app is frontend-focused and uses local TypeScript datasets rather than a backend database.
+
+## Appwrite Username Registry
+
+Create a `usernames` collection in the `unispora` database with these attributes:
+
+- `username`: string, required, size 36
+- `email`: string, optional, size 128
+- `userId`: string, optional, size 64
+
+Each username is stored as the document ID, so Appwrite rejects duplicates. The app reserves the username before creating the Auth user; if the reservation fails, account creation does not continue.
 
 ## Repository
 
