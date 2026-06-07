@@ -53,8 +53,9 @@ export function Auth({
     try {
       if (signup) {
         await createAccount(email.trim(), password, role);
+        setEmail("");
         setPassword("");
-        setMessage("Account created. We sent a verification email to your inbox.");
+        setMessage("Check your inbox to verify your email. You can log in after verification.");
         return;
       }
 

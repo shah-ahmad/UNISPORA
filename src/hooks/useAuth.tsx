@@ -30,7 +30,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let cancelled = false;
 
     account.get()
-      .then((currentUser) => {
+      .then(async (currentUser) => {
+        if (!currentUser.emailVerification) {
+          await account.deleteSession("current").catch(() => undefined);
+          if (!cancelled) setUser(undefined);
+          return;
+        }
+
         if (!cancelled) setUser(currentUser as Models.User<UniSporaPreferences>);
       })
       .catch(() => {
@@ -51,6 +57,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async login(email, password) {
       await account.createEmailPasswordSession(email, password);
       const currentUser = await account.get() as Models.User<UniSporaPreferences>;
+      if (!currentUser.emailVerification) {
+        await account.createEmailVerification({ url: `${window.location.origin}/verify` });
+        await account.deleteSession("current");
+        setUser(undefined);
+        throw new Error("Please verify your email first. We sent a new verification link.");
+      }
+
       setUser(currentUser);
       return currentUser;
     },
@@ -66,7 +79,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await account.updatePrefs({ role });
       await account.createEmailVerification({ url: `${window.location.origin}/verify` });
       const currentUser = await account.get() as Models.User<UniSporaPreferences>;
-      setUser(currentUser);
+      await account.deleteSession("current");
+      setUser(undefined);
       return currentUser;
     },
     async sendVerificationEmail() {
@@ -74,8 +88,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
     async verifyEmail(userId, secret) {
       await account.updateEmailVerification({ userId, secret });
-      const currentUser = await account.get() as Models.User<UniSporaPreferences>;
-      setUser(currentUser);
+      try {
+        const currentUser = await account.get() as Models.User<UniSporaPreferences>;
+        setUser(currentUser);
+      } catch {
+        setUser(undefined);
+      }
     },
     signInWithGoogle() {
       account.createOAuth2Session({
