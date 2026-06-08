@@ -1,7 +1,7 @@
 import type { University } from "@/types/university";
 
 const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT ?? "https://fra.cloud.appwrite.io/v1";
-const projectId = import.meta.env.VITE_APPWRITE_PROJECT_ID ?? "6a2439e0003d1ec5dcd5";
+const projectId = import.meta.env.VITE_APPWRITE_PROJECT_ID ?? "6a25cb6500103eec5cb3";
 const databaseId = import.meta.env.VITE_APPWRITE_DATABASE_ID ?? "unispora";
 const collectionId = import.meta.env.VITE_APPWRITE_UNIVERSITIES_COLLECTION_ID ?? "universities";
 
