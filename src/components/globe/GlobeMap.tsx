@@ -80,19 +80,6 @@ export function GlobeMap({
       mapRef.current = map;
       map.scrollZoom.enable();
 
-      const secondsPerRevolution = 180;
-      let userInteracting = false;
-      const spinGlobe = () => {
-        if (!map || userInteracting || map.getZoom() >= 5) return;
-        const center = map.getCenter();
-        center.lng -= 360 / secondsPerRevolution;
-        map.easeTo({ center, duration: 1000, easing: (n: number) => n });
-      };
-
-      map.on("mousedown", () => (userInteracting = true));
-      map.on("dragstart", () => (userInteracting = true));
-      map.on("touchstart", () => (userInteracting = true));
-      map.on("moveend", spinGlobe);
       map.on("move", updateSelectedPoint);
       map.on("zoom", updateSelectedPoint);
       map.on("resize", updateSelectedPoint);
