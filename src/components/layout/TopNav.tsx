@@ -17,6 +17,7 @@ export function TopNav({
   userLabel,
   onAccountClick,
   activeAction,
+  mobile = false,
 }: {
   onSearchClick?: () => void;
   onLoginClick?: () => void;
@@ -24,12 +25,16 @@ export function TopNav({
   userLabel?: string;
   onAccountClick?: () => void;
   activeAction?: "login" | "signup";
+  mobile?: boolean;
 }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const visibleItems = mobile
+    ? navItems.filter((item) => ["Home", "Bookmarks", "Search", "Login", "Sign Up"].includes(item.label))
+    : navItems;
 
   return (
-    <nav className={`top-nav ${activeAction ? "modal-action-active" : ""}`} aria-label="Primary navigation">
-      {navItems.map((item) => {
+    <nav className={`top-nav ${mobile ? "top-nav-mobile" : ""} ${activeAction ? "modal-action-active" : ""}`} aria-label="Primary navigation">
+      {visibleItems.map((item) => {
         const Icon = item.icon;
         const routeActive = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
         const active = activeAction ? item.action === activeAction : routeActive;

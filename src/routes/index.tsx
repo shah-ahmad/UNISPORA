@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Check, ChevronDown, Filter, RotateCcw, Search, X } from "lucide-react";
 import { GlobeMap } from "@/components/globe/GlobeMap";
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import { SidebarHero } from "@/components/layout/SidebarHero";
 import { TopNav } from "@/components/layout/TopNav";
 import { UniversityDetailsPanel } from "@/components/globe/UniversityDetailsPanel";
@@ -135,8 +136,136 @@ function Index() {
     chooseSearchResult(match);
   }
 
+  function renderFilterPopover(extraClass = "") {
+    if (!filtersOpen) return null;
+
+    return (
+      <div className={`filter-popover ${openFilterMenu ? "menu-open" : ""} ${extraClass}`} role="dialog" aria-label="Filter universities">
+        <div className="filter-popover-header">
+          <div>
+            <span>Filters</span>
+            <strong>{pendingFilteredUniversities.length} universities</strong>
+          </div>
+          <button
+            className="icon-button"
+            type="button"
+            aria-label="Close filters"
+            onClick={() => {
+              setFiltersOpen(false);
+              setOpenFilterMenu(undefined);
+            }}
+          >
+            <X size={17} />
+          </button>
+        </div>
+        <GlassSelect
+          id="continent"
+          label="Continent"
+          value={pendingContinent}
+          options={continentOptions}
+          open={openFilterMenu === "continent"}
+          onOpenChange={(open) => setOpenFilterMenu(open ? "continent" : undefined)}
+          onChange={updatePendingContinent}
+        />
+        <GlassSelect
+          id="country"
+          label="Country"
+          value={pendingCountry}
+          options={countryOptions}
+          open={openFilterMenu === "country"}
+          onOpenChange={(open) => setOpenFilterMenu(open ? "country" : undefined)}
+          onChange={(value) => {
+            setPendingCountry(value);
+            setOpenFilterMenu(undefined);
+          }}
+        />
+        <div className="filter-actions-row">
+          <button className="filter-apply-button" type="button" onClick={applyFilters}>
+            <Check size={17} /> Apply filters
+          </button>
+          <button className="filter-reset-button" type="button" onClick={resetFilters}>
+            <RotateCcw size={15} /> Reset
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main className="home-page">
+      <div className="mobile-home-header">
+        <div className="mobile-home-topline">
+          <BrandLogo compact />
+          <div className="mobile-home-controls">
+            <ThemeToggle />
+            <button
+              className="control-pill mobile-filter-pill"
+              type="button"
+              onClick={() => {
+                setFiltersOpen((value) => !value);
+                setOpenFilterMenu(undefined);
+              }}
+            >
+              <Filter size={16} /> Filters
+            </button>
+          </div>
+        </div>
+        <TopNav
+          mobile
+          onSearchClick={() => setSearchOpen(true)}
+          onLoginClick={() => setAuthMode(user ? "account" : "login")}
+          onSignupClick={() => setAuthMode("signup")}
+          userLabel={userLabel}
+          onAccountClick={() => setAuthMode("account")}
+          activeAction={authMode === "account" ? undefined : authMode}
+        />
+        {searchOpen ? (
+          <div className="mobile-search-popover">
+            <label className="home-search-box">
+              <Search size={18} />
+              <input
+                ref={searchInputRef}
+                value={searchQuery}
+                onChange={(event) => {
+                  setSearchQuery(event.target.value);
+                  setSearchCommitted(false);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    submitSearch();
+                  }
+                }}
+                placeholder="Search university..."
+              />
+              <button
+                type="button"
+                aria-label="Close search"
+                onClick={() => {
+                  setSearchOpen(false);
+                  setSearchQuery("");
+                  setSearchCommitted(false);
+                }}
+              >
+                <X size={17} />
+              </button>
+            </label>
+            {!searchCommitted && searchResults.length > 0 ? (
+              <div className="home-search-results">
+                {searchResults.map((university) => (
+                  <button key={university.id} type="button" onClick={() => chooseSearchResult(university)}>
+                    <strong>{university.name}</strong>
+                    <span>{university.city}, {university.country}</span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+        <div className="mobile-filter-popover-wrap">
+          {renderFilterPopover("mobile-filter-popover")}
+        </div>
+      </div>
       <SidebarHero />
       <section className="home-globe">
         <div className="absolute left-0 top-0 z-20 hidden h-full w-px bg-gradient-to-b from-transparent via-[#f6a623] to-transparent lg:block" />
@@ -194,7 +323,7 @@ function Index() {
             />
           )}
         </div>
-        <div className="absolute right-6 top-7 z-50 flex flex-col gap-3">
+        <div className="home-floating-controls absolute right-6 top-7 z-50 flex flex-col gap-3">
           <ThemeToggle />
           <div className="filter-control">
             <button
@@ -207,56 +336,7 @@ function Index() {
             >
               <Filter size={17} /> Filters
             </button>
-            {filtersOpen ? (
-              <div className={`filter-popover ${openFilterMenu ? "menu-open" : ""}`} role="dialog" aria-label="Filter universities">
-                <div className="filter-popover-header">
-                  <div>
-                    <span>Filters</span>
-                    <strong>{pendingFilteredUniversities.length} universities</strong>
-                  </div>
-                  <button
-                    className="icon-button"
-                    type="button"
-                    aria-label="Close filters"
-                    onClick={() => {
-                      setFiltersOpen(false);
-                      setOpenFilterMenu(undefined);
-                    }}
-                  >
-                    <X size={17} />
-                  </button>
-                </div>
-                <GlassSelect
-                  id="continent"
-                  label="Continent"
-                  value={pendingContinent}
-                  options={continentOptions}
-                  open={openFilterMenu === "continent"}
-                  onOpenChange={(open) => setOpenFilterMenu(open ? "continent" : undefined)}
-                  onChange={updatePendingContinent}
-                />
-                <GlassSelect
-                  id="country"
-                  label="Country"
-                  value={pendingCountry}
-                  options={countryOptions}
-                  open={openFilterMenu === "country"}
-                  onOpenChange={(open) => setOpenFilterMenu(open ? "country" : undefined)}
-                  onChange={(value) => {
-                    setPendingCountry(value);
-                    setOpenFilterMenu(undefined);
-                  }}
-                />
-                <div className="filter-actions-row">
-                  <button className="filter-apply-button" type="button" onClick={applyFilters}>
-                    <Check size={17} /> Apply filters
-                  </button>
-                  <button className="filter-reset-button" type="button" onClick={resetFilters}>
-                    <RotateCcw size={15} /> Reset
-                  </button>
-                </div>
-              </div>
-            ) : null}
+            {renderFilterPopover()}
           </div>
         </div>
         <div className="globe-stage">
