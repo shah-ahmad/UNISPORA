@@ -13,6 +13,10 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (pathName) => pathName.replace(/^\/appwrite/, ""),
       },
+      "/api": {
+        target: "https://www.unispora.com",
+        changeOrigin: true,
+      },
     },
   },
   resolve: {
