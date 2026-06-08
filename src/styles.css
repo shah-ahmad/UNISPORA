@@ -2031,11 +2031,116 @@ button.top-nav-link {
   line-height: 1.5;
 }
 
+.scholarship-link {
+  color: #ffe2a5;
+  text-decoration: underline;
+  text-decoration-color: rgba(246, 183, 92, 0.72);
+  text-underline-offset: 3px;
+  transition: color 0.18s ease, text-shadow 0.18s ease;
+}
+
+.scholarship-link:hover {
+  color: #fff6d7;
+  text-shadow: 0 0 14px rgba(246, 183, 92, 0.6);
+}
+
 .details-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   margin-top: 22px;
+}
+
+.scholarship-page {
+  width: min(980px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 38px 0 70px;
+}
+
+.scholarship-hero,
+.scholarship-article {
+  padding: 30px;
+}
+
+.scholarship-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.scholarship-hero h1 {
+  max-width: 760px;
+  margin: 14px 0 0;
+  color: #fff4df;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.4rem, 6vw, 4.8rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.scholarship-hero p:last-child {
+  max-width: 680px;
+  margin: 18px 0 0;
+  color: #e5d7c3;
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.scholarship-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 26px;
+  color: #ffe2a5;
+  font-weight: 700;
+}
+
+.scholarship-content {
+  margin-top: 20px;
+}
+
+.scholarship-article {
+  display: grid;
+  gap: 24px;
+}
+
+.scholarship-section {
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 212, 147, 0.22);
+}
+
+.scholarship-section:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.scholarship-section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #ffd493;
+}
+
+.scholarship-section-title span {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 212, 147, 0.34);
+  border-radius: 12px;
+  background: rgba(246, 183, 92, 0.16);
+}
+
+.scholarship-section h2 {
+  margin: 0;
+  color: #fff7e8;
+  font-size: 22px;
+}
+
+.scholarship-section p {
+  margin: 12px 0 0;
+  color: #e7d9c8;
+  font-size: 16px;
+  line-height: 1.8;
 }
 
 .home-details.anchored-details,

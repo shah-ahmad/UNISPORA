@@ -71,7 +71,7 @@ export function UniversityDetailsPanel({
         <Info icon={<GraduationCap size={18} />} label="Programs" value={university.programs.join(", ")} tone="violet" />
         <Info icon={<CircleDollarSign size={18} />} label="Tuition" value={university.tuition} tone="blue" />
         <Info icon={<Languages size={18} />} label="Languages" value={university.languages.join(", ")} tone="teal" />
-        <Info icon={<Award size={18} />} label="Scholarships" value={university.scholarships.join(", ")} tone="gold" />
+        <Info icon={<Award size={18} />} label="Scholarships" value={<ScholarshipList university={university} />} tone="gold" />
         <div className="details-actions">
           <Link to="/ai-advisor" search={{ university: university.id }} className="panel-action primary"><MessageSquareText size={17} /> Ask AI</Link>
           <Link to="/consultants" className="panel-action"><Users size={17} /> Consultant</Link>
@@ -91,7 +91,7 @@ function Info({
 }: {
   icon: ReactNode;
   label: string;
-  value: string;
+  value: ReactNode;
   tone: "violet" | "blue" | "teal" | "gold";
 }) {
   return (
@@ -102,5 +102,31 @@ function Info({
         <strong className="details-info-value">{value}</strong>
       </span>
     </div>
+  );
+}
+
+function ScholarshipList({ university }: { university: University }) {
+  const isHungarianUniversity = university.country.toLowerCase() === "hungary";
+
+  return (
+    <strong className="details-info-value">
+      {university.scholarships.map((scholarship, index) => {
+        const isClickable =
+          isHungarianUniversity &&
+          scholarship.toLowerCase() === "stipendium hungaricum scholarship";
+        const suffix = index < university.scholarships.length - 1 ? ", " : "";
+
+        if (!isClickable) return <span key={scholarship}>{scholarship}{suffix}</span>;
+
+        return (
+          <span key={scholarship}>
+            <Link className="scholarship-link" to="/scholarships/stipendium-hungaricum">
+              {scholarship}
+            </Link>
+            {suffix}
+          </span>
+        );
+      })}
+    </strong>
   );
 }

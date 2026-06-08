@@ -17,6 +17,7 @@ import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as AiAdvisorRouteImport } from './routes/ai-advisor'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ConsultantsIndexRouteImport } from './routes/consultants.index'
+import { Route as ScholarshipsStipendiumHungaricumRouteImport } from './routes/scholarships.stipendium-hungaricum'
 import { Route as DashboardStudentRouteImport } from './routes/dashboard.student'
 import { Route as DashboardConsultantRouteImport } from './routes/dashboard.consultant'
 import { Route as ConsultantsConsultantIdRouteImport } from './routes/consultants.$consultantId'
@@ -61,6 +62,12 @@ const ConsultantsIndexRoute = ConsultantsIndexRouteImport.update({
   path: '/consultants/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScholarshipsStipendiumHungaricumRoute =
+  ScholarshipsStipendiumHungaricumRouteImport.update({
+    id: '/scholarships/stipendium-hungaricum',
+    path: '/scholarships/stipendium-hungaricum',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DashboardStudentRoute = DashboardStudentRouteImport.update({
   id: '/dashboard/student',
   path: '/dashboard/student',
@@ -88,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/consultants/$consultantId': typeof ConsultantsConsultantIdRoute
   '/dashboard/consultant': typeof DashboardConsultantRoute
   '/dashboard/student': typeof DashboardStudentRoute
+  '/scholarships/stipendium-hungaricum': typeof ScholarshipsStipendiumHungaricumRoute
   '/consultants/': typeof ConsultantsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +109,7 @@ export interface FileRoutesByTo {
   '/consultants/$consultantId': typeof ConsultantsConsultantIdRoute
   '/dashboard/consultant': typeof DashboardConsultantRoute
   '/dashboard/student': typeof DashboardStudentRoute
+  '/scholarships/stipendium-hungaricum': typeof ScholarshipsStipendiumHungaricumRoute
   '/consultants': typeof ConsultantsIndexRoute
 }
 export interface FileRoutesById {
@@ -115,6 +124,7 @@ export interface FileRoutesById {
   '/consultants/$consultantId': typeof ConsultantsConsultantIdRoute
   '/dashboard/consultant': typeof DashboardConsultantRoute
   '/dashboard/student': typeof DashboardStudentRoute
+  '/scholarships/stipendium-hungaricum': typeof ScholarshipsStipendiumHungaricumRoute
   '/consultants/': typeof ConsultantsIndexRoute
 }
 export interface FileRouteTypes {
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/consultants/$consultantId'
     | '/dashboard/consultant'
     | '/dashboard/student'
+    | '/scholarships/stipendium-hungaricum'
     | '/consultants/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/consultants/$consultantId'
     | '/dashboard/consultant'
     | '/dashboard/student'
+    | '/scholarships/stipendium-hungaricum'
     | '/consultants'
   id:
     | '__root__'
@@ -156,6 +168,7 @@ export interface FileRouteTypes {
     | '/consultants/$consultantId'
     | '/dashboard/consultant'
     | '/dashboard/student'
+    | '/scholarships/stipendium-hungaricum'
     | '/consultants/'
   fileRoutesById: FileRoutesById
 }
@@ -170,6 +183,7 @@ export interface RootRouteChildren {
   ConsultantsConsultantIdRoute: typeof ConsultantsConsultantIdRoute
   DashboardConsultantRoute: typeof DashboardConsultantRoute
   DashboardStudentRoute: typeof DashboardStudentRoute
+  ScholarshipsStipendiumHungaricumRoute: typeof ScholarshipsStipendiumHungaricumRoute
   ConsultantsIndexRoute: typeof ConsultantsIndexRoute
 }
 
@@ -231,6 +245,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConsultantsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/scholarships/stipendium-hungaricum': {
+      id: '/scholarships/stipendium-hungaricum'
+      path: '/scholarships/stipendium-hungaricum'
+      fullPath: '/scholarships/stipendium-hungaricum'
+      preLoaderRoute: typeof ScholarshipsStipendiumHungaricumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/student': {
       id: '/dashboard/student'
       path: '/dashboard/student'
@@ -266,6 +287,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConsultantsConsultantIdRoute: ConsultantsConsultantIdRoute,
   DashboardConsultantRoute: DashboardConsultantRoute,
   DashboardStudentRoute: DashboardStudentRoute,
+  ScholarshipsStipendiumHungaricumRoute: ScholarshipsStipendiumHungaricumRoute,
   ConsultantsIndexRoute: ConsultantsIndexRoute,
 }
 export const routeTree = rootRouteImport
