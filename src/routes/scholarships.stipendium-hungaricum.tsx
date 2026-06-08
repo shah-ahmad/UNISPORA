@@ -1,12 +1,26 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Award, CalendarDays, FileText, GraduationCap } from "lucide-react";
+import {
+  ArrowLeft,
+  Award,
+  BookOpenCheck,
+  CalendarDays,
+  CheckCircle2,
+  ExternalLink,
+  FileText,
+  GraduationCap,
+  Languages,
+  ShieldCheck,
+} from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { getScholarshipBySlug } from "@/data/scholarships";
 
 export const Route = createFileRoute("/scholarships/stipendium-hungaricum")({
   component: StipendiumHungaricum,
 });
 
 function StipendiumHungaricum() {
+  const scholarship = getScholarshipBySlug("stipendium-hungaricum")!;
+
   return (
     <AppShell>
       <section className="scholarship-page">
@@ -15,48 +29,96 @@ function StipendiumHungaricum() {
             <ArrowLeft size={18} /> Back to globe
           </Link>
           <p className="text-sm uppercase tracking-[0.24em] text-[#f6b75c]">Scholarship guide</p>
-          <h1>Stipendium Hungaricum Scholarship</h1>
-          <p>
-            A dedicated UniSpora page for the Hungarian government scholarship. Add the full
-            eligibility, application steps, required documents, deadlines, and practical notes here.
-          </p>
+          <h1>{scholarship.title}</h1>
+          <p>{scholarship.summary}</p>
+
+          <div className="scholarship-quick-grid">
+            {scholarship.quickFacts.map((fact) => (
+              <div key={fact.label} className="scholarship-fact">
+                <span>{fact.label}</span>
+                <strong>{fact.value}</strong>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="scholarship-content">
           <article className="glass-card scholarship-article">
-            <Section icon={<GraduationCap size={20} />} title="Overview">
-              <p>
-                Paste your main scholarship introduction here. This section can explain who the
-                scholarship is for, what it covers, which study levels are supported, and why it is
-                relevant for students applying to universities in Hungary.
-              </p>
+            <Section icon={<Award size={20} />} title="What it covers">
+              <Bullets items={scholarship.benefits} />
             </Section>
 
-            <Section icon={<Award size={20} />} title="Benefits">
-              <p>
-                Add details about tuition coverage, monthly stipend, accommodation contribution,
-                medical insurance, and any country-specific conditions you want students to know.
-              </p>
+            <Section icon={<ShieldCheck size={20} />} title="Who can apply">
+              <Bullets items={scholarship.eligibility} />
             </Section>
 
-            <Section icon={<FileText size={20} />} title="Required Documents">
-              <p>
-                Add the document checklist here: passport, transcripts, motivation letter, language
-                certificate, medical certificate, portfolio, recommendation letters, and anything
-                else required for the programs you want to cover.
-              </p>
+            <Section icon={<Languages size={20} />} title="English requirement">
+              <p>{scholarship.languageNote}</p>
             </Section>
 
-            <Section icon={<CalendarDays size={20} />} title="Timeline And Application Steps">
-              <p>
-                Add the application timeline, nomination process, university ranking choices,
-                entrance exam notes, interview steps, and final acceptance process here.
-              </p>
+            <Section icon={<GraduationCap size={20} />} title="Study levels">
+              <TagList items={scholarship.studyLevels} />
             </Section>
+
+            <Section icon={<BookOpenCheck size={20} />} title="Common fields">
+              <TagList items={scholarship.fields} />
+            </Section>
+
+            <Section icon={<FileText size={20} />} title="Basic documents">
+              <Bullets items={scholarship.documents} />
+            </Section>
+
+            <Section icon={<CalendarDays size={20} />} title="Application process">
+              <ol className="scholarship-steps">
+                {scholarship.process.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
+            </Section>
+
+            <Section icon={<CheckCircle2 size={20} />} title="Important notes">
+              <Bullets items={scholarship.importantNotes} />
+            </Section>
+
+            <Section icon={<Award size={20} />} title="Eligible Sending Partners">
+              <p>
+                Eligibility depends on official agreements between Hungary and partner countries.
+                The list below is a quick reference, but students should always confirm the current
+                country-specific rules on the official website.
+              </p>
+              <details className="scholarship-countries">
+                <summary>View sending partners</summary>
+                <TagList items={scholarship.sendingPartners} />
+              </details>
+            </Section>
+
+            <a className="panel-action primary scholarship-official-link" href={scholarship.officialUrl} target="_blank" rel="noreferrer">
+              Official scholarship website <ExternalLink size={17} />
+            </a>
           </article>
         </div>
       </section>
     </AppShell>
+  );
+}
+
+function Bullets({ items }: { items: string[] }) {
+  return (
+    <ul className="scholarship-bullets">
+      {items.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
+  );
+}
+
+function TagList({ items }: { items: string[] }) {
+  return (
+    <div className="scholarship-tags">
+      {items.map((item) => (
+        <span key={item}>{item}</span>
+      ))}
+    </div>
   );
 }
 
