@@ -1,29 +1,48 @@
-export async function sendVerificationEmail(userId: string, email: string) {
-  const response = await fetch("/api/send-verification", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userId, email }),
-  });
+import { ExecutionMethod } from "appwrite";
+import { functions } from "@/lib/appwrite";
 
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(payload.message ?? "Could not send verification email.");
-  }
+const verificationFunctionId = import.meta.env.VITE_APPWRITE_VERIFICATION_FUNCTION_ID ?? "unispora-verification";
+
+export async function sendVerificationEmail(userId: string, email: string) {
+  await executeVerification({
+    action: "send",
+    userId,
+    email,
+    origin: window.location.origin,
+  });
 }
 
 export async function verifyEmailToken(token: string) {
-  const response = await fetch("/api/verify-email", {
-    method: "POST",
+  await executeVerification({
+    action: "verify",
+    token,
+  });
+}
+
+async function executeVerification(payload: Record<string, unknown>) {
+  const execution = await functions.createExecution({
+    functionId: verificationFunctionId,
+    body: JSON.stringify(payload),
+    async: false,
+    xpath: "/",
+    method: ExecutionMethod.POST,
     headers: {
-      "Content-Type": "application/json",
+      "content-type": "application/json",
     },
-    body: JSON.stringify({ token }),
   });
 
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(payload.message ?? "Could not verify email.");
+  const responsePayload = parseResponse(execution.responseBody);
+  const responseStatus = execution.responseStatusCode || 500;
+
+  if (responseStatus < 200 || responseStatus >= 300) {
+    throw new Error(responsePayload.message ?? "Could not complete verification.");
+  }
+}
+
+function parseResponse(value: string) {
+  try {
+    return JSON.parse(value || "{}") as { message?: string };
+  } catch {
+    return {};
   }
 }
