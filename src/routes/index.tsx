@@ -198,27 +198,8 @@ function Index() {
           <BrandLogo compact />
           <div className="mobile-home-controls">
             <ThemeToggle />
-            <button
-              className="control-pill mobile-filter-pill"
-              type="button"
-              onClick={() => {
-                setFiltersOpen((value) => !value);
-                setOpenFilterMenu(undefined);
-              }}
-            >
-              <Filter size={16} /> Filters
-            </button>
           </div>
         </div>
-        <TopNav
-          mobile
-          onSearchClick={() => setSearchOpen(true)}
-          onLoginClick={() => setAuthMode(user ? "account" : "login")}
-          onSignupClick={() => setAuthMode("signup")}
-          userLabel={userLabel}
-          onAccountClick={() => setAuthMode("account")}
-          activeAction={authMode === "account" ? undefined : authMode}
-        />
         {searchOpen ? (
           <div className="mobile-search-popover">
             <label className="home-search-box">
@@ -261,7 +242,29 @@ function Index() {
               </div>
             ) : null}
           </div>
-        ) : null}
+        ) : (
+          <TopNav
+            mobile
+            onSearchClick={() => setSearchOpen(true)}
+            onLoginClick={() => setAuthMode(user ? "account" : "login")}
+            onSignupClick={() => setAuthMode("signup")}
+            userLabel={userLabel}
+            onAccountClick={() => setAuthMode("account")}
+            activeAction={authMode === "account" ? undefined : authMode}
+          />
+        )}
+        <div className="mobile-filter-row">
+          <button
+            className="control-pill mobile-filter-pill"
+            type="button"
+            onClick={() => {
+              setFiltersOpen((value) => !value);
+              setOpenFilterMenu(undefined);
+            }}
+          >
+            <Filter size={16} /> Filters
+          </button>
+        </div>
         <div className="mobile-filter-popover-wrap">
           {renderFilterPopover("mobile-filter-popover")}
         </div>

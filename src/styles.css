@@ -2285,7 +2285,7 @@ button.top-nav-link {
     position: relative;
     z-index: 80;
     display: grid;
-    gap: 10px;
+    gap: 8px;
     order: 1;
     padding: 12px 12px 10px;
     background:
@@ -2296,7 +2296,7 @@ button.top-nav-link {
 
   .mobile-home-topline {
     display: grid;
-    grid-template-columns: minmax(112px, 150px) 1fr;
+    grid-template-columns: minmax(112px, 150px) auto;
     align-items: center;
     gap: 8px;
   }
@@ -2313,15 +2313,16 @@ button.top-nav-link {
   }
 
   .mobile-home-controls .control-pill {
-    min-width: 0;
-    height: 36px;
-    gap: 6px;
-    padding: 0 10px;
-    font-size: 12px;
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    gap: 0;
+    padding: 0;
+    font-size: 0;
   }
 
-  .mobile-filter-pill {
-    max-width: 92px;
+  .mobile-home-controls .control-pill svg:last-child {
+    display: none;
   }
 
   .mobile-home-header .top-nav {
@@ -2364,11 +2365,13 @@ button.top-nav-link {
   .mobile-search-popover {
     position: relative;
     z-index: 85;
+    transform-origin: center;
+    animation: mobileSearchExpand 0.28s cubic-bezier(0.2, 0.82, 0.2, 1) both;
   }
 
   .mobile-search-popover .home-search-box {
     width: 100%;
-    min-height: 44px;
+    min-height: 46px;
   }
 
   .mobile-search-popover .home-search-results {
@@ -2381,6 +2384,19 @@ button.top-nav-link {
   .mobile-filter-popover-wrap {
     position: relative;
     z-index: 90;
+  }
+
+  .mobile-filter-row {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .mobile-filter-pill {
+    width: auto;
+    min-width: 110px;
+    height: 38px;
+    padding: 0 14px;
+    font-size: 13px;
   }
 
   .mobile-filter-popover-wrap .filter-popover {
@@ -2507,6 +2523,18 @@ button.top-nav-link {
 
   .details-scroll {
     max-height: calc(100vh - 214px);
+  }
+}
+
+@keyframes mobileSearchExpand {
+  from {
+    opacity: 0;
+    transform: scaleX(0.62);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleX(1);
   }
 }
 
