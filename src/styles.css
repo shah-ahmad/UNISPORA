@@ -1181,6 +1181,20 @@ button.top-nav-link {
   color: rgba(255, 244, 223, 0.72);
 }
 
+.bookmarks-actions {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+@media (max-width: 560px) {
+  .bookmarks-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
 .mapboxgl-popup {
   z-index: 70 !important;
 }
