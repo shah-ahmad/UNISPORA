@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { Check, ChevronDown, Filter, RotateCcw, Search, X } from "lucide-react";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { Check, ChevronDown, Filter, RotateCcw, Search, Sparkles, X } from "lucide-react";
 import { GlobeMap } from "@/components/globe/GlobeMap";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { SidebarHero } from "@/components/layout/SidebarHero";
@@ -253,24 +253,29 @@ function Index() {
             activeAction={authMode === "account" ? undefined : authMode}
           />
         )}
-        <div className="mobile-filter-row">
+      </div>
+      <SidebarHero />
+      <section className="home-globe">
+        <div className="mobile-map-actions">
+          <Link className="mobile-map-action" to="/ai-advisor" search={{ university: undefined }} aria-label="AI Advisor">
+            <Sparkles size={18} />
+          </Link>
           <button
-            className="control-pill mobile-filter-pill"
+            className="mobile-map-action mobile-filter-pill"
             type="button"
+            aria-label="Filters"
             onClick={() => {
               setFiltersOpen((value) => !value);
               setOpenFilterMenu(undefined);
             }}
           >
-            <Filter size={16} /> Filters
+            <Filter size={18} />
+            <span>Filters</span>
           </button>
         </div>
         <div className="mobile-filter-popover-wrap">
           {renderFilterPopover("mobile-filter-popover")}
         </div>
-      </div>
-      <SidebarHero />
-      <section className="home-globe">
         <div className="absolute left-0 top-0 z-20 hidden h-full w-px bg-gradient-to-b from-transparent via-[#f6a623] to-transparent lg:block" />
         <div className="home-nav-slot absolute right-[220px] top-2 z-50 hidden xl:block">
           {searchOpen ? (
