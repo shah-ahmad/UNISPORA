@@ -107,20 +107,23 @@ function Info({
 
 function ScholarshipList({ university }: { university: University }) {
   const isHungarianUniversity = university.country.toLowerCase() === "hungary";
+  const scholarshipRoutes: Record<string, "/scholarships/stipendium-hungaricum" | "/scholarships/hungarian-diaspora-scholarship"> = {
+    "stipendium hungaricum scholarship": "/scholarships/stipendium-hungaricum",
+    "hungarian diaspora scholarship": "/scholarships/hungarian-diaspora-scholarship",
+  };
 
   return (
     <strong className="details-info-value">
       {university.scholarships.map((scholarship, index) => {
-        const isClickable =
-          isHungarianUniversity &&
-          scholarship.toLowerCase() === "stipendium hungaricum scholarship";
+        const route = scholarshipRoutes[scholarship.toLowerCase()];
+        const isClickable = isHungarianUniversity && route;
         const suffix = index < university.scholarships.length - 1 ? ", " : "";
 
         if (!isClickable) return <span key={scholarship}>{scholarship}{suffix}</span>;
 
         return (
           <span key={scholarship}>
-            <Link className="scholarship-link" to="/scholarships/stipendium-hungaricum">
+            <Link className="scholarship-link" to={route}>
               {scholarship}
             </Link>
             {suffix}
