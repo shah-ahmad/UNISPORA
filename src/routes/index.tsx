@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { Check, ChevronDown, Filter, RotateCcw, Search, Sparkles, X } from "lucide-react";
+import { ArrowDown, Check, ChevronDown, Filter, RotateCcw, Search, Sparkles, X } from "lucide-react";
 import { GlobeMap } from "@/components/globe/GlobeMap";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { SidebarHero } from "@/components/layout/SidebarHero";
@@ -256,6 +256,14 @@ function Index() {
       </div>
       <SidebarHero />
       <section className="home-globe">
+        <button
+          className="mobile-scroll-down"
+          type="button"
+          aria-label="Scroll to page details"
+          onClick={() => document.querySelector(".home-sidebar")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+        >
+          <ArrowDown size={18} />
+        </button>
         <div className="mobile-map-actions">
           <Link className="mobile-map-action" to="/ai-advisor" search={{ university: undefined }} aria-label="AI Advisor">
             <Sparkles size={18} />
