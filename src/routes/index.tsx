@@ -9,8 +9,6 @@ import { TopNav } from "@/components/layout/TopNav";
 import { UniversityDetailsPanel } from "@/components/globe/UniversityDetailsPanel";
 import { AccountCard, Auth } from "@/routes/login";
 import type { University } from "@/types/university";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { useAppTheme } from "@/components/layout/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { useUniversities } from "@/hooks/useUniversities";
 
@@ -44,7 +42,6 @@ function Index() {
   const [focusTarget, setFocusTarget] = useState<GlobeFocusTarget>();
   const [selectedId, setSelectedId] = useState<string>();
   const [selectedPoint, setSelectedPoint] = useState<{ x: number; y: number }>();
-  const { theme } = useAppTheme();
   const continentOptions = useMemo(() => [all, ...unique(universities.map(getContinent))], [universities]);
   const countryOptions = useMemo(() => {
     const scoped = pendingContinent === all
@@ -196,9 +193,6 @@ function Index() {
       <div className="mobile-home-header">
         <div className="mobile-home-topline">
           <BrandLogo compact />
-          <div className="mobile-home-controls">
-            <ThemeToggle />
-          </div>
         </div>
         {searchOpen ? (
           <div className="mobile-search-popover">
@@ -340,7 +334,6 @@ function Index() {
           )}
         </div>
         <div className="home-floating-controls absolute right-6 top-7 z-50 flex flex-col gap-3">
-          <ThemeToggle />
           <div className="filter-control">
             <button
               className="control-pill"
@@ -357,7 +350,6 @@ function Index() {
         </div>
         <div className="globe-stage">
           <GlobeMap
-            theme={theme}
             universities={filteredUniversities}
             focusTarget={focusTarget}
             selectedUniversityId={selectedId}

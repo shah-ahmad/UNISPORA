@@ -6,7 +6,6 @@ import { AppShell } from "@/components/layout/AppShell";
 import { GlobeMap } from "@/components/globe/GlobeMap";
 import { UniversityDetailsPanel } from "@/components/globe/UniversityDetailsPanel";
 import type { University } from "@/types/university";
-import { useAppTheme } from "@/components/layout/theme";
 import { useUniversities } from "@/hooks/useUniversities";
 
 export const Route = createFileRoute("/explore")({
@@ -26,7 +25,6 @@ function Explore() {
   const [scholarships, setScholarships] = useState(false);
   const [selected, setSelected] = useState<University>();
   const [selectedPoint, setSelectedPoint] = useState<{ x: number; y: number }>();
-  const { theme } = useAppTheme();
 
   useEffect(() => {
     if (universities[0] && (!selected || !universities.some((university) => university.id === selected.id))) {
@@ -79,7 +77,6 @@ function Explore() {
         </aside>
         <section className="explore-globe">
           <GlobeMap
-            theme={theme}
             universities={filtered}
             selectedUniversityId={selected?.id}
             onSelectUniversity={setSelected}

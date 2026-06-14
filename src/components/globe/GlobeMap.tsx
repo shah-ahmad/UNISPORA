@@ -3,7 +3,6 @@ import type { University } from "@/types/university";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN ?? "";
 const DARK_MAP_STYLE = "mapbox://styles/ahmadshah2194/cmp1csqt3000801sj4sm44dfa";
-const LIGHT_MAP_STYLE = "mapbox://styles/mapbox/light-v11";
 const SATELLITE_MAP_STYLE = "mapbox://styles/mapbox/satellite-streets-v12";
 
 type GlobeStyle = "digital" | "satellite";
@@ -16,7 +15,6 @@ type GlobeFocusTarget = {
 };
 
 type GlobeMapProps = {
-  theme: "dark" | "light";
   globeStyle?: GlobeStyle;
   universities: University[];
   focusTarget?: GlobeFocusTarget;
@@ -26,7 +24,6 @@ type GlobeMapProps = {
 };
 
 export function GlobeMap({
-  theme,
   globeStyle = "digital",
   universities,
   focusTarget,
@@ -62,7 +59,7 @@ export function GlobeMap({
       if (cancelled || !containerRef.current) return;
 
       mapboxgl.accessToken = MAPBOX_TOKEN;
-      const selectedMapStyle = globeStyle === "satellite" ? SATELLITE_MAP_STYLE : theme === "dark" ? DARK_MAP_STYLE : LIGHT_MAP_STYLE;
+      const selectedMapStyle = globeStyle === "satellite" ? SATELLITE_MAP_STYLE : DARK_MAP_STYLE;
 
       map = new mapboxgl.Map({
         container: containerRef.current,
@@ -249,7 +246,7 @@ export function GlobeMap({
       const point = map.project([selected.longitude, selected.latitude]);
       onPointRef.current?.({ x: point.x, y: point.y });
     }
-  }, [mounted, theme, globeStyle]);
+  }, [mounted, globeStyle]);
 
   useEffect(() => {
     const source = mapRef.current?.getSource("universities");
