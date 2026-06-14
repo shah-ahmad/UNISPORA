@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { LogOut } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
@@ -11,9 +11,11 @@ export const Route = createFileRoute("/login")({
 });
 
 function Login() {
+  const oauthStatus = new URLSearchParams(window.location.search).get("oauth") ?? undefined;
+
   return (
     <AppShell>
-      <Auth title="Welcome back to UniSpora." action="Login" />
+      <Auth title="Welcome back to UniSpora." action="Login" oauthStatus={oauthStatus} />
     </AppShell>
   );
 }
@@ -25,11 +27,13 @@ export function Auth({
   action,
   signup = false,
   onSuccess,
+  oauthStatus,
 }: {
   title: string;
   action: string;
   signup?: boolean;
   onSuccess?: () => void;
+  oauthStatus?: string;
 }) {
   const navigate = useNavigate();
   const { user, login, signup: createAccount, signInWithGoogle } = useAuth();
@@ -39,6 +43,12 @@ export function Auth({
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (oauthStatus === "failed") {
+      setMessage("Google sign in was cancelled or could not be completed. Please try again.");
+    }
+  }, [oauthStatus]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

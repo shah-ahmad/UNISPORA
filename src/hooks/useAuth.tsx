@@ -9,19 +9,28 @@ type UniSporaPreferences = Models.Preferences & {
   role?: AuthRole;
 };
 
+type PendingSignup = {
+  email: string;
+  password: string;
+  role: AuthRole;
+  expiresAt: number;
+};
+
 type AuthContextValue = {
   user?: Models.User<UniSporaPreferences>;
   loading: boolean;
   login: (email: string, password: string) => Promise<Models.User<UniSporaPreferences>>;
   signup: (email: string, password: string, role: AuthRole) => Promise<Models.User<UniSporaPreferences>>;
   sendVerificationEmail: () => Promise<void>;
-  verifyEmail: (token: string) => Promise<void>;
+  verifyEmail: (token: string) => Promise<Models.User<UniSporaPreferences> | undefined>;
   signInWithGoogle: () => void;
   updateUsername: (name: string) => Promise<Models.User<UniSporaPreferences>>;
   logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+const pendingSignupKey = "unispora-pending-signup";
+const pendingSignupTtl = 1000 * 60 * 60 * 24;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<Models.User<UniSporaPreferences>>();
@@ -30,15 +39,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
 
-    account.get()
+    loadCurrentUser()
       .then(async (currentUser) => {
-        if (!currentUser.emailVerification) {
+        if (!currentUser) {
+          if (!cancelled) setUser(undefined);
+          return;
+        }
+
+        if (!currentUser.user.emailVerification && currentUser.session.provider === "email") {
           await account.deleteSession("current").catch(() => undefined);
           if (!cancelled) setUser(undefined);
           return;
         }
 
-        if (!cancelled) setUser(currentUser as Models.User<UniSporaPreferences>);
+        const readyUser = await finalizeCurrentUser(currentUser.user as Models.User<UniSporaPreferences>, currentUser.session);
+        if (!cancelled) setUser(readyUser);
       })
       .catch(() => {
         if (!cancelled) setUser(undefined);
@@ -60,6 +75,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const currentUser = await account.get() as Models.User<UniSporaPreferences>;
       if (!currentUser.emailVerification) {
         await sendUniSporaVerificationEmail(currentUser.$id, currentUser.email);
+        savePendingSignup({
+          email,
+          password,
+          role: currentUser.prefs?.role ?? "student",
+          expiresAt: Date.now() + pendingSignupTtl,
+        });
         await account.deleteSession("current");
         setUser(undefined);
         throw new Error("Please verify your email first. We sent a new verification link.");
@@ -80,6 +101,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await account.updatePrefs({ role });
       const currentUser = await account.get() as Models.User<UniSporaPreferences>;
       await sendUniSporaVerificationEmail(currentUser.$id, currentUser.email);
+      savePendingSignup({
+        email,
+        password,
+        role,
+        expiresAt: Date.now() + pendingSignupTtl,
+      });
       await account.deleteSession("current");
       setUser(undefined);
       return currentUser;
@@ -90,13 +117,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
     async verifyEmail(token) {
       await verifyEmailToken(token);
-      setUser(undefined);
+      const tokenEmail = readTokenEmail(token);
+      const pendingSignup = getPendingSignup();
+      if (!pendingSignup || pendingSignup.email.toLowerCase() !== tokenEmail?.toLowerCase()) {
+        setUser(undefined);
+        return undefined;
+      }
+
+      await account.deleteSession("current").catch(() => undefined);
+      await account.createEmailPasswordSession(pendingSignup.email, pendingSignup.password);
+      await account.updatePrefs({ role: pendingSignup.role }).catch(() => undefined);
+      const currentUser = await account.get() as Models.User<UniSporaPreferences>;
+      clearPendingSignup();
+      setUser(currentUser);
+      return currentUser;
     },
     signInWithGoogle() {
       account.createOAuth2Session({
         provider: OAuthProvider.Google,
-        success: `${window.location.origin}/`,
-        failure: `${window.location.origin}/login`,
+        success: `${window.location.origin}/login?oauth=success`,
+        failure: `${window.location.origin}/login?oauth=failed`,
         scopes: ["email", "profile"],
       });
     },
@@ -133,4 +173,76 @@ export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used inside AuthProvider.");
   return context;
+}
+
+async function loadCurrentUser() {
+  const [user, session] = await Promise.all([
+    account.get(),
+    account.getSession("current"),
+  ]);
+
+  return {
+    user: user as Models.User<UniSporaPreferences>,
+    session,
+  };
+}
+
+async function finalizeCurrentUser(currentUser: Models.User<UniSporaPreferences>, session: Models.Session) {
+  if (session.provider !== "google") return currentUser;
+
+  const normalizedName = normalizeUsername(currentUser.name);
+  if (normalizedName && normalizedName === currentUser.name) return currentUser;
+
+  try {
+    const username = await reserveAutomaticUsername(currentUser.email, {
+      email: currentUser.email,
+      userId: currentUser.$id,
+    });
+    return await account.updateName(username) as Models.User<UniSporaPreferences>;
+  } catch {
+    return currentUser;
+  }
+}
+
+function savePendingSignup(signup: PendingSignup) {
+  window.sessionStorage.setItem(pendingSignupKey, JSON.stringify(signup));
+}
+
+function getPendingSignup() {
+  try {
+    const stored = window.sessionStorage.getItem(pendingSignupKey);
+    if (!stored) return undefined;
+
+    const pendingSignup = JSON.parse(stored) as PendingSignup;
+    if (!pendingSignup.email || !pendingSignup.password || pendingSignup.expiresAt < Date.now()) {
+      clearPendingSignup();
+      return undefined;
+    }
+
+    return pendingSignup;
+  } catch {
+    clearPendingSignup();
+    return undefined;
+  }
+}
+
+function clearPendingSignup() {
+  window.sessionStorage.removeItem(pendingSignupKey);
+}
+
+function readTokenEmail(token: string) {
+  try {
+    const [body] = token.split(".");
+    if (!body) return undefined;
+
+    const payload = JSON.parse(atob(toBase64(body))) as { email?: string };
+    return payload.email;
+  } catch {
+    return undefined;
+  }
+}
+
+function toBase64(value: string) {
+  const padded = value.padEnd(value.length + ((4 - (value.length % 4)) % 4), "=");
+  return padded.replace(/-/g, "+").replace(/_/g, "/");
 }

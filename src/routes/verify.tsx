@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,6 +10,7 @@ export const Route = createFileRoute("/verify")({
 
 function VerifyEmail() {
   const { verifyEmail } = useAuth();
+  const navigate = useNavigate();
   const verificationStarted = useRef(false);
   const [status, setStatus] = useState<"checking" | "success" | "error">("checking");
   const [message, setMessage] = useState("Verifying your email...");
@@ -27,15 +29,22 @@ function VerifyEmail() {
     }
 
     verifyEmail(token)
-      .then(() => {
+      .then(async (user) => {
         setStatus("success");
-        setMessage("Your email has been verified. You can now log in to UniSpora.");
+        if (user) {
+          setMessage("Your email has been verified. Signing you in...");
+          const destination = user.prefs?.role === "consultant" ? "/dashboard/consultant" : "/dashboard/student";
+          await navigate({ to: destination });
+          return;
+        }
+
+        setMessage("Your email has been verified. Please log in to continue.");
       })
       .catch((error) => {
         setStatus("error");
         setMessage(error instanceof Error ? error.message : "We could not verify this email link.");
       });
-  }, [verifyEmail]);
+  }, [navigate, verifyEmail]);
 
   return (
     <AppShell>
@@ -43,8 +52,8 @@ function VerifyEmail() {
         <div className="auth-card verify-card">
           <h1>{status === "success" ? "Email verified." : status === "error" ? "Verification failed." : "Checking email."}</h1>
           <p className="auth-message">{message}</p>
-          <Link className="panel-action primary justify-center" to="/">
-            Back to UniSpora
+          <Link className="panel-action primary justify-center" to={status === "success" ? "/login" : "/"}>
+            {status === "success" ? "Continue to login" : "Back to UniSpora"}
           </Link>
         </div>
       </section>
