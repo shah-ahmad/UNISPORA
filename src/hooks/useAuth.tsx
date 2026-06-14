@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { Models } from "appwrite";
-import { account, ID, OAuthProvider } from "@/lib/appwrite";
+import { account, getAppwriteEndpoint, getAppwriteProjectId, ID, OAuthProvider } from "@/lib/appwrite";
 import { normalizeUsername, releaseUsername, reserveAutomaticUsername, reserveUsername } from "@/lib/usernames";
 import { sendVerificationEmail as sendUniSporaVerificationEmail, verifyEmailToken } from "@/lib/verification";
 
@@ -133,7 +133,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return currentUser;
     },
     signInWithGoogle() {
-      account.createOAuth2Session({
+      window.location.href = getOAuthUrl({
         provider: OAuthProvider.Google,
         success: `${window.location.origin}/login?oauth=success`,
         failure: `${window.location.origin}/login?oauth=failed`,
@@ -245,4 +245,26 @@ function readTokenEmail(token: string) {
 function toBase64(value: string) {
   const padded = value.padEnd(value.length + ((4 - (value.length % 4)) % 4), "=");
   return padded.replace(/-/g, "+").replace(/_/g, "/");
+}
+
+function getOAuthUrl({
+  provider,
+  success,
+  failure,
+  scopes,
+}: {
+  provider: OAuthProvider;
+  success: string;
+  failure: string;
+  scopes: string[];
+}) {
+  const endpoint = getAppwriteEndpoint().replace(/\/$/, "");
+  const url = new URL(`${endpoint}/account/sessions/oauth2/${provider}`);
+
+  url.searchParams.set("project", getAppwriteProjectId());
+  url.searchParams.set("success", success);
+  url.searchParams.set("failure", failure);
+  scopes.forEach((scope) => url.searchParams.append("scopes[]", scope));
+
+  return url.toString();
 }
