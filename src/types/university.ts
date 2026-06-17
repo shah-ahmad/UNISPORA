@@ -12,6 +12,11 @@ export type University = {
   programs: string[];
   tuition: string;
   tuitionValue?: number;
+  applicationFeeNonMedical?: number;
+  applicationFeeMedical?: number | null;
+  applicationFeeCurrency?: string;
+  applicationFeeLastUpdated?: string;
+  applicationFeeSource?: string;
   languages: string[];
   scholarships: string[];
 };

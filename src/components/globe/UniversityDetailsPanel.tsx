@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import {
   Award,
   CircleDollarSign,
+  CreditCard,
   Globe2,
   GraduationCap,
   Languages,
@@ -70,6 +71,7 @@ export function UniversityDetailsPanel({
         <p className="mt-4 text-sm leading-6 text-[#ded2bd]">{university.description}</p>
         <Info icon={<GraduationCap size={18} />} label="Programs" value={university.programs.join(", ")} tone="violet" />
         <Info icon={<CircleDollarSign size={18} />} label="Tuition" value={university.tuition} tone="blue" />
+        <Info icon={<CreditCard size={18} />} label="Application fee" value={<ApplicationFee university={university} />} tone="gold" />
         <Info icon={<Languages size={18} />} label="Languages" value={university.languages.join(", ")} tone="teal" />
         <Info icon={<Award size={18} />} label="Scholarships" value={<ScholarshipList university={university} />} tone="gold" />
         <div className="details-actions">
@@ -99,10 +101,57 @@ function Info({
       <span className={`details-info-icon ${tone}`}>{icon}</span>
       <span>
         <span className="details-info-label">{label}</span>
-        <strong className="details-info-value">{value}</strong>
+        <span className="details-info-value">{value}</span>
       </span>
     </div>
   );
+}
+
+function ApplicationFee({ university }: { university: University }) {
+  const nonMedicalFee = university.applicationFeeNonMedical;
+  const medicalFee = university.applicationFeeMedical;
+  const hasNonMedicalFee = typeof nonMedicalFee === "number";
+  const hasMedicalFee = typeof medicalFee === "number";
+
+  if (!hasNonMedicalFee && !hasMedicalFee) {
+    return <span>Information not publicly available</span>;
+  }
+
+  return (
+    <span className="application-fee-details">
+      {hasNonMedicalFee ? (
+        <span>
+          <span className="fee-label">Bachelor's</span>
+          {formatApplicationFee(nonMedicalFee, university.applicationFeeCurrency)}
+        </span>
+      ) : null}
+      {hasMedicalFee ? (
+        <span>
+          <span className="fee-label">Medicine / Dentistry / Health</span>
+          {formatApplicationFee(medicalFee, university.applicationFeeCurrency)}
+        </span>
+      ) : null}
+      {university.applicationFeeSource ? (
+        <a className="fee-source-link" href={university.applicationFeeSource} target="_blank" rel="noreferrer">
+          Official source
+        </a>
+      ) : null}
+      {university.applicationFeeLastUpdated ? (
+        <span className="fee-updated">Updated {formatFeeDate(university.applicationFeeLastUpdated)}</span>
+      ) : null}
+    </span>
+  );
+}
+
+function formatApplicationFee(amount: number, currency?: string) {
+  if (amount === 0) return "No application fee";
+  return `${amount.toLocaleString()}${currency ? ` ${currency}` : ""}`;
+}
+
+function formatFeeDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 }
 
 function ScholarshipList({ university }: { university: University }) {

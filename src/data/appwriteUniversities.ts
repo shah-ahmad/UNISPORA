@@ -51,6 +51,11 @@ function toUniversity(document: AppwriteUniversityDocument): University | undefi
     programs: Array.isArray(document.programs) ? document.programs : [],
     tuition: document.tuition ?? "",
     tuitionValue: document.tuitionValue,
+    applicationFeeNonMedical: document.applicationFeeNonMedical,
+    applicationFeeMedical: document.applicationFeeMedical,
+    applicationFeeCurrency: document.applicationFeeCurrency,
+    applicationFeeLastUpdated: document.applicationFeeLastUpdated,
+    applicationFeeSource: document.applicationFeeSource,
     languages: Array.isArray(document.languages) ? document.languages : [],
     scholarships: Array.isArray(document.scholarships) ? document.scholarships : [],
   };
