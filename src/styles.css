@@ -2037,6 +2037,167 @@ button.top-nav-link {
   gap: 9px;
 }
 
+.costs-panel {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid rgba(209, 229, 239, 0.2);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.14), transparent 36%),
+    linear-gradient(135deg, rgba(30, 57, 72, 0.74), rgba(12, 32, 47, 0.78));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 16px 34px rgba(0, 0, 0, 0.16);
+}
+
+.costs-heading {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 212, 147, 0.18);
+}
+
+.costs-heading-icon,
+.cost-column-icon {
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(226, 243, 250, 0.18);
+  border-radius: 10px;
+  color: #ffe2a5;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.costs-heading-icon {
+  width: 52px;
+  height: 52px;
+}
+
+.costs-title,
+.cost-column-title {
+  display: block;
+  color: #ffd493 !important;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.costs-title {
+  font-size: 17px;
+}
+
+.costs-subtitle,
+.cost-column-subtitle {
+  display: block;
+  margin-top: 5px;
+  color: rgba(255, 250, 240, 0.76) !important;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.costs-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.cost-column {
+  min-width: 0;
+}
+
+.cost-column + .cost-column {
+  padding-left: 18px;
+  border-left: 1px solid rgba(226, 243, 250, 0.14);
+}
+
+.cost-column-heading {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.cost-column-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.cost-column-title {
+  font-size: 13px;
+}
+
+.cost-column-subtitle {
+  font-size: 12px;
+}
+
+.cost-program-group {
+  display: grid;
+  gap: 9px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 212, 147, 0.16);
+}
+
+.cost-program-title {
+  color: #ffd493 !important;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.cost-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(104px, auto);
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid rgba(226, 243, 250, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.cost-degree {
+  display: block;
+  color: #fffaf0 !important;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.cost-amount {
+  display: block;
+  padding: 8px 10px;
+  border: 1px solid rgba(226, 243, 250, 0.14);
+  border-radius: 9px;
+  color: #fffaf0 !important;
+  background: rgba(8, 24, 37, 0.22);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: right;
+}
+
+.costs-note {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 10px;
+  align-items: start;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 212, 147, 0.18);
+  color: rgba(255, 250, 240, 0.76) !important;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.costs-note svg {
+  color: #dff7ff;
+}
+
 .cost-breakdown > span,
 .cost-group > span {
   display: block;
@@ -2706,6 +2867,89 @@ button.top-nav-link {
     margin-top: 4px;
     font-size: 12px;
     line-height: 1.35;
+  }
+
+  .costs-panel {
+    margin-top: 14px;
+    padding: 13px;
+    border-radius: 15px;
+  }
+
+  .costs-heading {
+    grid-template-columns: 38px 1fr;
+    gap: 10px;
+    padding-bottom: 12px;
+  }
+
+  .costs-heading-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .costs-heading-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .costs-title {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+  }
+
+  .costs-subtitle,
+  .cost-column-subtitle,
+  .costs-note {
+    font-size: 11px;
+  }
+
+  .costs-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .cost-column + .cost-column {
+    padding-left: 0;
+    padding-top: 14px;
+    border-left: 0;
+    border-top: 1px solid rgba(226, 243, 250, 0.14);
+  }
+
+  .cost-column-heading {
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+  }
+
+  .cost-column-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .cost-column-title,
+  .cost-program-title {
+    font-size: 11px;
+  }
+
+  .cost-program-group {
+    gap: 7px;
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .cost-item {
+    grid-template-columns: 1fr;
+    gap: 7px;
+    padding: 9px;
+    border-radius: 10px;
+  }
+
+  .cost-degree,
+  .cost-amount {
+    font-size: 11px;
+  }
+
+  .cost-amount {
+    text-align: left;
   }
 
   .details-actions {

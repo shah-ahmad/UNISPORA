@@ -5,6 +5,7 @@ import {
   Award,
   CircleDollarSign,
   CreditCard,
+  Info as InfoIcon,
   Globe2,
   GraduationCap,
   Languages,
@@ -70,8 +71,7 @@ export function UniversityDetailsPanel({
         <p className="mt-2 flex items-center gap-2 text-[#d7ccbb]"><MapPin size={17} /> {university.city}, {university.country}</p>
         <p className="mt-4 text-sm leading-6 text-[#ded2bd]">{university.description}</p>
         <Info icon={<GraduationCap size={18} />} label="Programs" value={university.programs.join(", ")} tone="violet" />
-        <Info icon={<CircleDollarSign size={18} />} label="Tuition" value={<CostBreakdown university={university} kind="tuition" />} tone="blue" />
-        <Info icon={<CreditCard size={18} />} label="Application fee" value={<CostBreakdown university={university} kind="applicationFee" />} tone="gold" />
+        <TuitionApplicationFeeCard university={university} />
         <Info icon={<Languages size={18} />} label="Languages" value={university.languages.join(", ")} tone="teal" />
         <Info icon={<Award size={18} />} label="Scholarships" value={<ScholarshipList university={university} />} tone="gold" />
         <div className="details-actions">
@@ -125,6 +125,97 @@ type StructuredCosts = {
   applicationFee?: CostSection;
 };
 
+function TuitionApplicationFeeCard({ university }: { university: University }) {
+  const structuredCosts = parseStructuredCosts(university.tuitionDetails);
+  const tuition = structuredCosts?.tuition ?? getFallbackTuitionSection(university);
+  const applicationFee = structuredCosts?.applicationFee ?? getFallbackApplicationFeeSection(university);
+
+  return (
+    <section className="costs-panel" aria-label="Tuition and application fee">
+      <div className="costs-heading">
+        <span className="costs-heading-icon">
+          <GraduationCap size={27} />
+        </span>
+        <span>
+          <span className="costs-title">Tuition &amp; Application Fee</span>
+          <span className="costs-subtitle">Estimated costs may vary depending on program and university.</span>
+        </span>
+      </div>
+      <div className="costs-grid">
+        <CostColumn
+          icon={<CircleDollarSign size={20} />}
+          title="Tuition (per year)"
+          subtitle="Estimated tuition fees per year"
+          section={tuition}
+        />
+        <CostColumn
+          icon={<CreditCard size={20} />}
+          title="Application fee (one-time)"
+          subtitle="One-time fee required when submitting your application"
+          section={applicationFee}
+        />
+      </div>
+      <div className="costs-note">
+        <InfoIcon size={17} />
+        <span>Fees are approximate and may change. Always check the official university website for the latest updates.</span>
+      </div>
+    </section>
+  );
+}
+
+function CostColumn({
+  icon,
+  title,
+  subtitle,
+  section,
+}: {
+  icon: ReactNode;
+  title: string;
+  subtitle: string;
+  section?: CostSection;
+}) {
+  return (
+    <div className="cost-column">
+      <div className="cost-column-heading">
+        <span className="cost-column-icon">{icon}</span>
+        <span>
+          <span className="cost-column-title">{title}</span>
+          <span className="cost-column-subtitle">{subtitle}</span>
+        </span>
+      </div>
+      <CostProgramGroup title="Medical programs" group={section?.medicalPrograms} />
+      <CostProgramGroup title="Non-medical programs" group={section?.nonMedicalPrograms} />
+      {section?.source ? (
+        <a className="cost-source-link" href={section.source} target="_blank" rel="noreferrer">
+          Official source
+        </a>
+      ) : null}
+      {section?.lastUpdated ? <span className="cost-updated">Updated {formatFeeDate(section.lastUpdated)}</span> : null}
+    </div>
+  );
+}
+
+function CostProgramGroup({ title, group }: { title: string; group?: CostGroup }) {
+  return (
+    <div className="cost-program-group">
+      <span className="cost-program-title">{title}</span>
+      <CostItem degree="Bachelor's" value={group?.bachelors} />
+      <CostItem degree="Master's" value={group?.masters} />
+    </div>
+  );
+}
+
+function CostItem({ degree, value }: { degree: string; value?: string }) {
+  return (
+    <div className="cost-item">
+      <span>
+        <span className="cost-degree">{degree}</span>
+      </span>
+      <span className="cost-amount">{value ?? "Not listed"}</span>
+    </div>
+  );
+}
+
 function CostBreakdown({ university, kind }: { university: University; kind: "tuition" | "applicationFee" }) {
   const structuredCosts = parseStructuredCosts(university.tuitionDetails);
   const section = structuredCosts?.[kind];
@@ -170,6 +261,52 @@ function CostBreakdown({ university, kind }: { university: University; kind: "tu
       ) : null}
     </span>
   );
+}
+
+function getFallbackTuitionSection(university: University): CostSection {
+  const value = university.tuition || "Information not publicly available";
+  return {
+    nonMedicalPrograms: {
+      bachelors: value,
+      masters: value,
+    },
+  };
+}
+
+function getFallbackApplicationFeeSection(university: University): CostSection | undefined {
+  const nonMedicalFee = university.applicationFeeNonMedical;
+  const medicalFee = university.applicationFeeMedical;
+  const hasNonMedicalFee = typeof nonMedicalFee === "number";
+  const hasMedicalFee = typeof medicalFee === "number";
+
+  if (!hasNonMedicalFee && !hasMedicalFee) {
+    return {
+      medicalPrograms: {
+        bachelors: "Information not publicly available",
+        masters: "Information not publicly available",
+      },
+      nonMedicalPrograms: {
+        bachelors: "Information not publicly available",
+        masters: "Information not publicly available",
+      },
+    };
+  }
+
+  const nonMedical = hasNonMedicalFee ? formatApplicationFee(nonMedicalFee, university.applicationFeeCurrency) : "Not listed";
+  const medical = hasMedicalFee ? formatApplicationFee(medicalFee, university.applicationFeeCurrency) : "Not listed";
+
+  return {
+    medicalPrograms: {
+      bachelors: medical,
+      masters: medical,
+    },
+    nonMedicalPrograms: {
+      bachelors: nonMedical,
+      masters: nonMedical,
+    },
+    source: university.applicationFeeSource,
+    lastUpdated: university.applicationFeeLastUpdated,
+  };
 }
 
 function StructuredCostSection({ section }: { section: CostSection }) {
