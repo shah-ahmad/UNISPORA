@@ -70,7 +70,7 @@ export function UniversityDetailsPanel({
         <p className="mt-2 flex items-center gap-2 text-[#d7ccbb]"><MapPin size={17} /> {university.city}, {university.country}</p>
         <p className="mt-4 text-sm leading-6 text-[#ded2bd]">{university.description}</p>
         <Info icon={<GraduationCap size={18} />} label="Programs" value={university.programs.join(", ")} tone="violet" />
-        <TuitionApplicationFeeCard university={university} />
+        <TuitionApplicationFeeRows university={university} />
         <Info icon={<Languages size={18} />} label="Languages" value={university.languages.join(", ")} tone="teal" />
         <Info icon={<Award size={18} />} label="Scholarships" value={<ScholarshipList university={university} />} tone="gold" />
         <div className="details-actions">
@@ -124,47 +124,45 @@ type StructuredCosts = {
   applicationFee?: CostSection;
 };
 
-function TuitionApplicationFeeCard({ university }: { university: University }) {
+function TuitionApplicationFeeRows({ university }: { university: University }) {
   const structuredCosts = parseStructuredCosts(university.tuitionDetails);
   const tuition = structuredCosts?.tuition ?? getFallbackTuitionSection(university);
   const applicationFee = structuredCosts?.applicationFee ?? getFallbackApplicationFeeSection(university);
-  const source = applicationFee?.source ?? tuition?.source;
-  const lastUpdated = applicationFee?.lastUpdated ?? tuition?.lastUpdated;
 
   return (
-    <section className="costs-panel" aria-label="Tuition and application fee">
-      <CostColumn icon={<GraduationCap size={23} />} title="Tuition" section={tuition} />
-      <CostColumn icon={<CreditCard size={21} />} title="Application fee" section={applicationFee} />
-      <div className="cost-meta">
-        {source ? (
-          <a className="cost-source-link" href={source} target="_blank" rel="noreferrer">
-            Official source <Globe2 size={16} />
-          </a>
-        ) : null}
-        {lastUpdated ? <span className="cost-updated">Updated {formatFeeDate(lastUpdated)}</span> : null}
-      </div>
-    </section>
+    <>
+      <Info icon={<CircleDollarSign size={18} />} label="Tuition" value={<CostColumn section={tuition} />} tone="blue" />
+      <Info icon={<CreditCard size={18} />} label="Application fee" value={<CostColumn section={applicationFee} />} tone="gold" />
+    </>
   );
 }
 
 function CostColumn({
-  icon,
-  title,
   section,
 }: {
-  icon: ReactNode;
-  title: string;
   section?: CostSection;
 }) {
   return (
     <div className="cost-column">
-      <div className="cost-column-heading">
-        <span className="cost-column-icon">{icon}</span>
-        <span className="cost-column-title">{title}</span>
-      </div>
       <CostProgramGroup title="Medical programs" group={section?.medicalPrograms} />
       <CostProgramGroup title="Non-medical programs" group={section?.nonMedicalPrograms} />
+      <CostMeta section={section} />
     </div>
+  );
+}
+
+function CostMeta({ section }: { section?: CostSection }) {
+  if (!section?.source && !section?.lastUpdated) return null;
+
+  return (
+    <span className="cost-meta">
+      {section.source ? (
+        <a className="cost-source-link" href={section.source} target="_blank" rel="noreferrer">
+          Official source <Globe2 size={14} />
+        </a>
+      ) : null}
+      {section.lastUpdated ? <span className="cost-updated">Updated {formatFeeDate(section.lastUpdated)}</span> : null}
+    </span>
   );
 }
 
