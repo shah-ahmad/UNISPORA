@@ -2039,9 +2039,9 @@ button.top-nav-link {
 
 .costs-panel {
   display: grid;
-  gap: 18px;
+  gap: 14px;
   margin-top: 18px;
-  padding: 18px 16px 16px;
+  padding: 15px 14px 14px;
   border: 1px solid rgba(209, 229, 239, 0.2);
   border-radius: 18px;
   background:
@@ -2072,12 +2072,12 @@ button.top-nav-link {
 
 .cost-column {
   display: grid;
-  gap: 13px;
+  gap: 10px;
   min-width: 0;
 }
 
 .cost-column + .cost-column {
-  padding-top: 18px;
+  padding-top: 14px;
   border-top: 1px solid rgba(226, 243, 250, 0.16);
 }
 
@@ -2089,24 +2089,24 @@ button.top-nav-link {
 }
 
 .cost-column-icon {
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
 }
 
 .cost-column-title {
-  font-size: 17px;
+  font-size: 15px;
 }
 
 .cost-program-group {
   display: grid;
-  gap: 7px;
-  padding-bottom: 12px;
+  gap: 6px;
+  padding-bottom: 10px;
   border-bottom: 1px solid rgba(226, 243, 250, 0.14);
 }
 
 .cost-program-title {
   color: #fffaf0 !important;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0;
   text-transform: none;
@@ -2114,26 +2114,30 @@ button.top-nav-link {
 
 .cost-item {
   display: grid;
-  grid-template-columns: auto minmax(20px, 1fr) auto;
-  gap: 8px;
-  align-items: center;
-  padding-left: 12px;
+  grid-template-columns: max-content minmax(12px, 1fr) minmax(0, auto);
+  gap: 7px;
+  align-items: baseline;
+  min-width: 0;
+  padding-left: 0;
   color: #fffaf0;
 }
 
-.cost-item::before {
-  content: "";
+.cost-bullet {
+  display: inline-block;
+  flex: 0 0 auto;
   width: 5px;
   height: 5px;
+  margin-right: 10px;
   border-radius: 999px;
   background: #ffe2a5;
   box-shadow: 0 0 10px rgba(255, 212, 147, 0.55);
 }
 
 .cost-degree {
-  display: block;
+  display: inline-flex;
+  align-items: center;
   color: #fffaf0 !important;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -2147,15 +2151,17 @@ button.top-nav-link {
 
 .cost-amount {
   display: block;
-  min-width: max-content;
+  min-width: 0;
+  max-width: 160px;
   padding: 0;
   border: 0;
   border-radius: 0;
   color: #fffaf0 !important;
   background: transparent;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   text-align: right;
+  overflow-wrap: anywhere;
 }
 
 .cost-meta {
@@ -2840,7 +2846,7 @@ button.top-nav-link {
 
   .costs-panel {
     margin-top: 14px;
-    padding: 13px;
+    padding: 12px;
     border-radius: 15px;
   }
 
@@ -2854,13 +2860,13 @@ button.top-nav-link {
   }
 
   .cost-column-heading {
-    grid-template-columns: 34px 1fr;
-    gap: 10px;
+    grid-template-columns: 32px 1fr;
+    gap: 9px;
   }
 
   .cost-column-icon {
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
   }
 
   .cost-column-title,
@@ -2874,13 +2880,14 @@ button.top-nav-link {
   }
 
   .cost-item {
-    grid-template-columns: auto minmax(14px, 1fr) auto;
-    gap: 6px;
+    grid-template-columns: max-content minmax(10px, 1fr) minmax(0, auto);
+    gap: 5px;
     padding-left: 8px;
   }
 
   .cost-degree,
   .cost-amount {
+    max-width: 128px;
     font-size: 12px;
   }
 

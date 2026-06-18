@@ -181,7 +181,7 @@ function CostProgramGroup({ title, group }: { title: string; group?: CostGroup }
 function CostItem({ degree, value }: { degree: string; value?: string }) {
   return (
     <div className="cost-item">
-      <span className="cost-degree">{degree}</span>
+      <span className="cost-degree"><span className="cost-bullet" aria-hidden="true" />{degree}</span>
       <span className="cost-leader" aria-hidden="true" />
       <span className="cost-amount">{value ?? "Not listed"}</span>
     </div>
