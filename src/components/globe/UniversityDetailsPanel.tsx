@@ -5,7 +5,6 @@ import {
   Award,
   CircleDollarSign,
   CreditCard,
-  Info as InfoIcon,
   Globe2,
   GraduationCap,
   Languages,
@@ -129,35 +128,20 @@ function TuitionApplicationFeeCard({ university }: { university: University }) {
   const structuredCosts = parseStructuredCosts(university.tuitionDetails);
   const tuition = structuredCosts?.tuition ?? getFallbackTuitionSection(university);
   const applicationFee = structuredCosts?.applicationFee ?? getFallbackApplicationFeeSection(university);
+  const source = applicationFee?.source ?? tuition?.source;
+  const lastUpdated = applicationFee?.lastUpdated ?? tuition?.lastUpdated;
 
   return (
     <section className="costs-panel" aria-label="Tuition and application fee">
-      <div className="costs-heading">
-        <span className="costs-heading-icon">
-          <GraduationCap size={27} />
-        </span>
-        <span>
-          <span className="costs-title">Tuition &amp; Application Fee</span>
-          <span className="costs-subtitle">Estimated costs may vary depending on program and university.</span>
-        </span>
-      </div>
-      <div className="costs-grid">
-        <CostColumn
-          icon={<CircleDollarSign size={20} />}
-          title="Tuition (per year)"
-          subtitle="Estimated tuition fees per year"
-          section={tuition}
-        />
-        <CostColumn
-          icon={<CreditCard size={20} />}
-          title="Application fee (one-time)"
-          subtitle="One-time fee required when submitting your application"
-          section={applicationFee}
-        />
-      </div>
-      <div className="costs-note">
-        <InfoIcon size={17} />
-        <span>Fees are approximate and may change. Always check the official university website for the latest updates.</span>
+      <CostColumn icon={<GraduationCap size={23} />} title="Tuition" section={tuition} />
+      <CostColumn icon={<CreditCard size={21} />} title="Application fee" section={applicationFee} />
+      <div className="cost-meta">
+        {source ? (
+          <a className="cost-source-link" href={source} target="_blank" rel="noreferrer">
+            Official source <Globe2 size={16} />
+          </a>
+        ) : null}
+        {lastUpdated ? <span className="cost-updated">Updated {formatFeeDate(lastUpdated)}</span> : null}
       </div>
     </section>
   );
@@ -166,31 +150,20 @@ function TuitionApplicationFeeCard({ university }: { university: University }) {
 function CostColumn({
   icon,
   title,
-  subtitle,
   section,
 }: {
   icon: ReactNode;
   title: string;
-  subtitle: string;
   section?: CostSection;
 }) {
   return (
     <div className="cost-column">
       <div className="cost-column-heading">
         <span className="cost-column-icon">{icon}</span>
-        <span>
-          <span className="cost-column-title">{title}</span>
-          <span className="cost-column-subtitle">{subtitle}</span>
-        </span>
+        <span className="cost-column-title">{title}</span>
       </div>
       <CostProgramGroup title="Medical programs" group={section?.medicalPrograms} />
       <CostProgramGroup title="Non-medical programs" group={section?.nonMedicalPrograms} />
-      {section?.source ? (
-        <a className="cost-source-link" href={section.source} target="_blank" rel="noreferrer">
-          Official source
-        </a>
-      ) : null}
-      {section?.lastUpdated ? <span className="cost-updated">Updated {formatFeeDate(section.lastUpdated)}</span> : null}
     </div>
   );
 }
@@ -208,9 +181,8 @@ function CostProgramGroup({ title, group }: { title: string; group?: CostGroup }
 function CostItem({ degree, value }: { degree: string; value?: string }) {
   return (
     <div className="cost-item">
-      <span>
-        <span className="cost-degree">{degree}</span>
-      </span>
+      <span className="cost-degree">{degree}</span>
+      <span className="cost-leader" aria-hidden="true" />
       <span className="cost-amount">{value ?? "Not listed"}</span>
     </div>
   );
