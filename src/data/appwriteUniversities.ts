@@ -16,7 +16,7 @@ type AppwriteDocumentsResponse = {
 
 export async function fetchAppwriteUniversities() {
   const query = new URLSearchParams();
-  query.append("queries[]", JSON.stringify({ method: "limit", values: [100] }));
+  query.append("queries[]", JSON.stringify({ method: "limit", values: [300] }));
   const url = `${endpoint.replace(/\/$/, "")}/databases/${databaseId}/collections/${collectionId}/documents?${query}`;
 
   const response = await fetch(url, {
