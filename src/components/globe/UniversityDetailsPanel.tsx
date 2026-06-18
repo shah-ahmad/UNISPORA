@@ -70,8 +70,8 @@ export function UniversityDetailsPanel({
         <p className="mt-2 flex items-center gap-2 text-[#d7ccbb]"><MapPin size={17} /> {university.city}, {university.country}</p>
         <p className="mt-4 text-sm leading-6 text-[#ded2bd]">{university.description}</p>
         <Info icon={<GraduationCap size={18} />} label="Programs" value={university.programs.join(", ")} tone="violet" />
-        <Info icon={<CircleDollarSign size={18} />} label="Tuition" value={university.tuition} tone="blue" />
-        <Info icon={<CreditCard size={18} />} label="Application fee" value={<ApplicationFee university={university} />} tone="gold" />
+        <Info icon={<CircleDollarSign size={18} />} label="Tuition" value={<CostBreakdown university={university} kind="tuition" />} tone="blue" />
+        <Info icon={<CreditCard size={18} />} label="Application fee" value={<CostBreakdown university={university} kind="applicationFee" />} tone="gold" />
         <Info icon={<Languages size={18} />} label="Languages" value={university.languages.join(", ")} tone="teal" />
         <Info icon={<Award size={18} />} label="Scholarships" value={<ScholarshipList university={university} />} tone="gold" />
         <div className="details-actions">
@@ -107,7 +107,36 @@ function Info({
   );
 }
 
-function ApplicationFee({ university }: { university: University }) {
+type CostGroup = {
+  bachelors?: string;
+  masters?: string;
+};
+
+type CostSection = {
+  currency?: string;
+  medicalPrograms?: CostGroup;
+  nonMedicalPrograms?: CostGroup;
+  source?: string;
+  lastUpdated?: string;
+};
+
+type StructuredCosts = {
+  tuition?: CostSection;
+  applicationFee?: CostSection;
+};
+
+function CostBreakdown({ university, kind }: { university: University; kind: "tuition" | "applicationFee" }) {
+  const structuredCosts = parseStructuredCosts(university.tuitionDetails);
+  const section = structuredCosts?.[kind];
+
+  if (section) {
+    return <StructuredCostSection section={section} />;
+  }
+
+  if (kind === "tuition") {
+    return <span>{university.tuition || "Information not publicly available"}</span>;
+  }
+
   const nonMedicalFee = university.applicationFeeNonMedical;
   const medicalFee = university.applicationFeeMedical;
   const hasNonMedicalFee = typeof nonMedicalFee === "number";
@@ -118,29 +147,73 @@ function ApplicationFee({ university }: { university: University }) {
   }
 
   return (
-    <span className="application-fee-details">
+    <span className="cost-breakdown">
       {hasNonMedicalFee ? (
         <span>
-          <span className="fee-label">Bachelor's</span>
+          <span className="cost-level">Bachelor's</span>
           {formatApplicationFee(nonMedicalFee, university.applicationFeeCurrency)}
         </span>
       ) : null}
       {hasMedicalFee ? (
         <span>
-          <span className="fee-label">Medicine / Dentistry / Health</span>
+          <span className="cost-level">Medicine / Dentistry / Health</span>
           {formatApplicationFee(medicalFee, university.applicationFeeCurrency)}
         </span>
       ) : null}
       {university.applicationFeeSource ? (
-        <a className="fee-source-link" href={university.applicationFeeSource} target="_blank" rel="noreferrer">
+        <a className="cost-source-link" href={university.applicationFeeSource} target="_blank" rel="noreferrer">
           Official source
         </a>
       ) : null}
       {university.applicationFeeLastUpdated ? (
-        <span className="fee-updated">Updated {formatFeeDate(university.applicationFeeLastUpdated)}</span>
+        <span className="cost-updated">Updated {formatFeeDate(university.applicationFeeLastUpdated)}</span>
       ) : null}
     </span>
   );
+}
+
+function StructuredCostSection({ section }: { section: CostSection }) {
+  return (
+    <span className="cost-breakdown">
+      <span className="cost-group">
+        <span className="cost-group-title">Medical programs</span>
+        <span>
+          <span className="cost-level">Bachelor's</span>
+          {section.medicalPrograms?.bachelors ?? "Not offered / not listed"}
+        </span>
+        <span>
+          <span className="cost-level">Master's</span>
+          {section.medicalPrograms?.masters ?? "Not offered / not listed"}
+        </span>
+      </span>
+      <span className="cost-group">
+        <span className="cost-group-title">Non-medical programs</span>
+        <span>
+          <span className="cost-level">Bachelor's</span>
+          {section.nonMedicalPrograms?.bachelors ?? "Not listed"}
+        </span>
+        <span>
+          <span className="cost-level">Master's</span>
+          {section.nonMedicalPrograms?.masters ?? "Not listed"}
+        </span>
+      </span>
+      {section.source ? (
+        <a className="cost-source-link" href={section.source} target="_blank" rel="noreferrer">
+          Official source
+        </a>
+      ) : null}
+      {section.lastUpdated ? <span className="cost-updated">Updated {formatFeeDate(section.lastUpdated)}</span> : null}
+    </span>
+  );
+}
+
+function parseStructuredCosts(value?: string): StructuredCosts | undefined {
+  if (!value) return undefined;
+  try {
+    return JSON.parse(value) as StructuredCosts;
+  } catch {
+    return undefined;
+  }
 }
 
 function formatApplicationFee(amount: number, currency?: string) {
@@ -162,23 +235,21 @@ function ScholarshipList({ university }: { university: University }) {
   };
 
   return (
-    <strong className="details-info-value">
+    <span className="scholarship-list">
       {university.scholarships.map((scholarship, index) => {
         const route = scholarshipRoutes[scholarship.toLowerCase()];
         const isClickable = isHungarianUniversity && route;
-        const suffix = index < university.scholarships.length - 1 ? ", " : "";
 
-        if (!isClickable) return <span key={scholarship}>{scholarship}{suffix}</span>;
+        if (!isClickable) return <span key={`${scholarship}-${index}`}>{scholarship}</span>;
 
         return (
-          <span key={scholarship}>
+          <span key={`${scholarship}-${index}`}>
             <Link className="scholarship-link" to={route}>
               {scholarship}
             </Link>
-            {suffix}
           </span>
         );
       })}
-    </strong>
+    </span>
   );
 }
