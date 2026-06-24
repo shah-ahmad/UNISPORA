@@ -19,5 +19,8 @@ export type University = {
   applicationFeeLastUpdated?: string;
   applicationFeeSource?: string;
   languages: string[];
+  languageRequirements?: string;
+  englishRequirements?: string;
+  localLanguageRequirements?: string;
   scholarships: string[];
 };

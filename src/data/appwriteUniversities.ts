@@ -58,6 +58,9 @@ function toUniversity(document: AppwriteUniversityDocument): University | undefi
     applicationFeeLastUpdated: document.applicationFeeLastUpdated,
     applicationFeeSource: document.applicationFeeSource,
     languages: Array.isArray(document.languages) ? document.languages : [],
+    languageRequirements: document.languageRequirements,
+    englishRequirements: document.englishRequirements,
+    localLanguageRequirements: document.localLanguageRequirements,
     scholarships: Array.isArray(document.scholarships) ? document.scholarships : [],
   };
 }

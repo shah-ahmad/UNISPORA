@@ -72,6 +72,7 @@ export function UniversityDetailsPanel({
         <Info icon={<GraduationCap size={18} />} label="Programs" value={university.programs.join(", ")} tone="violet" />
         <TuitionApplicationFeeRows university={university} />
         <Info icon={<Languages size={18} />} label="Languages" value={university.languages.join(", ")} tone="teal" />
+        <Info icon={<Languages size={18} />} label="Language requirements" value={<LanguageRequirements university={university} />} tone="teal" />
         <Info icon={<Award size={18} />} label="Scholarships" value={<ScholarshipList university={university} />} tone="gold" />
         <div className="details-actions">
           <Link to="/ai-advisor" search={{ university: university.id }} className="panel-action primary"><MessageSquareText size={17} /> Ask AI</Link>
@@ -332,6 +333,93 @@ function formatFeeDate(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+}
+
+function LanguageRequirements({ university }: { university: University }) {
+  const requirements = buildLanguageRequirements(university);
+
+  return (
+    <span className="language-requirements">
+      {requirements.map((item) => (
+        <span key={item.label} className="language-requirement-item">
+          <span className="language-requirement-label">{item.label}</span>
+          <span>{item.value}</span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function buildLanguageRequirements(university: University) {
+  const english = university.englishRequirements || getDefaultEnglishRequirement(university);
+  const local = university.localLanguageRequirements || getDefaultLocalLanguageRequirement(university);
+  const general = university.languageRequirements;
+
+  return [
+    { label: "English", value: english },
+    ...(local ? [{ label: getLocalLanguageLabel(university), value: local }] : []),
+    ...(general ? [{ label: "Program note", value: general }] : []),
+  ];
+}
+
+function getDefaultEnglishRequirement(university: University) {
+  const country = university.country.toLowerCase();
+  const hasEnglish = university.languages.some((language) => language.toLowerCase() === "english");
+
+  if (!hasEnglish) {
+    return "Check the selected program page. English-taught programs may ask for IELTS, TOEFL, Cambridge, Duolingo, or an English proficiency / medium of instruction certificate.";
+  }
+
+  if (country === "hungary") {
+    return "Usually IELTS, TOEFL, Cambridge, Duolingo, or an English proficiency / medium of instruction certificate may work, depending on the program.";
+  }
+
+  if (country === "germany" || country === "austria") {
+    return "English-taught programs usually ask for IELTS, TOEFL, Cambridge, or equivalent proof. Some programs may also accept an English proficiency / medium of instruction certificate.";
+  }
+
+  if (country === "united kingdom" || country === "ireland") {
+    return "Usually IELTS, TOEFL, Pearson PTE, Cambridge, or approved equivalent proof. Some programs may accept school English or previous English-medium study.";
+  }
+
+  return "Usually IELTS, TOEFL, Cambridge, Duolingo, Pearson PTE, or an English proficiency / medium of instruction certificate may work. Always check the selected program.";
+}
+
+function getDefaultLocalLanguageRequirement(university: University) {
+  const country = university.country.toLowerCase();
+  const languages = university.languages.map((language) => language.toLowerCase());
+
+  if ((country === "germany" || country === "austria") && languages.includes("german")) {
+    return "German-taught programs normally require German proof, often TestDaF, DSH, Goethe, telc, or an accepted equivalent.";
+  }
+
+  if (country === "france" && languages.includes("french")) {
+    return "French-taught programs normally require French proof such as DELF, DALF, TCF, or an accepted equivalent.";
+  }
+
+  if (country === "italy" && languages.includes("italian")) {
+    return "Italian-taught programs normally require Italian proof, often CILS, CELI, PLIDA, or an accepted equivalent.";
+  }
+
+  if (country === "spain" && languages.includes("spanish")) {
+    return "Spanish-taught programs normally require Spanish proof such as DELE, SIELE, or an accepted equivalent.";
+  }
+
+  if (country === "hungary" && languages.includes("hungarian")) {
+    return "Hungarian-taught programs may require Hungarian proficiency. English-taught programs usually do not.";
+  }
+
+  return undefined;
+}
+
+function getLocalLanguageLabel(university: University) {
+  const country = university.country.toLowerCase();
+  if (country === "germany" || country === "austria") return "German";
+  if (country === "france") return "French";
+  if (country === "italy") return "Italian";
+  if (country === "spain") return "Spanish";
+  if (country === "hungary") return "Hungarian";
+  return "Local language";
 }
 
 function ScholarshipList({ university }: { university: University }) {
