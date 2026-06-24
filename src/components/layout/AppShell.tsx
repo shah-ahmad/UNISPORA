@@ -9,7 +9,7 @@ export function AppShell({ children, showLogo = true }: { children: ReactNode; s
 
   return (
     <main className="app-shell min-h-screen">
-      <div className="relative z-40 mx-auto flex w-full max-w-[1660px] items-center justify-between px-5 py-5 lg:px-10">
+      <div className="app-shell-header">
         {showLogo ? <BrandLogo compact /> : <span />}
         <TopNav userLabel={userLabel} />
       </div>

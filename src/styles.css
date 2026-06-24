@@ -40,9 +40,35 @@ select {
 }
 
 .app-shell {
+  min-height: 100vh;
   background:
     linear-gradient(180deg, rgba(5, 15, 29, 0.96), rgba(2, 8, 18, 1)),
     #020913;
+}
+
+.app-shell-header {
+  position: sticky;
+  top: 0;
+  z-index: 70;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  width: min(100%, 1660px);
+  margin: 0 auto;
+  padding: 20px 40px 12px;
+  pointer-events: none;
+}
+
+.app-shell-header .brand-logo,
+.app-shell-header .top-nav {
+  pointer-events: auto;
+}
+
+.app-shell-header .top-nav {
+  justify-self: end;
+  max-width: min(850px, calc(100vw - 300px));
+  overflow: visible;
 }
 
 .home-page {
@@ -1285,6 +1311,15 @@ button.top-nav-link {
     grid-template-columns: 1fr;
   }
 
+  .app-shell-header {
+    padding: 18px 22px 10px;
+  }
+
+  .app-shell-header .top-nav {
+    max-width: min(760px, calc(100vw - 220px));
+    overflow: hidden;
+  }
+
   .home-sidebar {
     min-height: auto;
   }
@@ -1305,6 +1340,45 @@ button.top-nav-link {
 }
 
 @media (max-width: 720px) {
+  .app-shell-header {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 10px;
+    padding: 14px 12px 10px;
+    background:
+      linear-gradient(180deg, rgba(2, 9, 19, 0.9), rgba(2, 9, 19, 0.45) 70%, transparent);
+  }
+
+  .app-shell-header .brand-logo-compact {
+    width: 132px;
+  }
+
+  .app-shell-header .top-nav {
+    justify-self: center;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .app-shell-header .top-nav-link {
+    flex: 1 1 0;
+    justify-content: center;
+    min-width: 0;
+    padding: 0 5px;
+    gap: 5px;
+    font-size: 11px;
+  }
+
+  .app-shell-header .top-nav-link:nth-child(4) {
+    display: none;
+  }
+
+  .app-shell-header .top-nav-link span {
+    max-width: 62px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .brand-logo {
     width: 220px;
   }
