@@ -10,10 +10,10 @@ export function SidebarHero() {
       <div className="home-copy">
         <h1>Find your future university.</h1>
         <span className="gold-rule" />
-        <p>Explore universities by continent and country, click pins on the globe, and compare programs, tuition, languages, and scholarships.</p>
+        <p>Browse universities by continent and country, click pins on the globe, and compare programs, tuition, languages, and scholarships.</p>
       </div>
       <div className="grid gap-3">
-        <GlassLink href="/explore">
+        <GlassLink href="/">
           Start Exploring
           <ArrowRight size={17} />
         </GlassLink>

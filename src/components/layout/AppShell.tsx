@@ -1,4 +1,3 @@
-import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { X } from "lucide-react";
@@ -12,7 +11,6 @@ type AuthMode = "login" | "signup" | "account";
 
 export function AppShell({ children, showLogo = true }: { children: ReactNode; showLogo?: boolean }) {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const userLabel = user?.name || user?.email?.split("@")[0];
   const [authMode, setAuthMode] = useState<AuthMode>();
 
@@ -29,7 +27,6 @@ export function AppShell({ children, showLogo = true }: { children: ReactNode; s
             userLabel={userLabel}
             onSearchClick={() => {
               setAuthMode(undefined);
-              void navigate({ to: "/explore" });
             }}
             onLoginClick={() => setAuthMode(user ? "account" : "login")}
             onSignupClick={() => setAuthMode("signup")}

@@ -1,11 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Bookmark, Compass, Home, LogIn, Search, Sparkles, User, UserPlus } from "lucide-react";
+import { Bookmark, Home, LogIn, Search, Sparkles, User, UserPlus } from "lucide-react";
 
 const navItems = [
   { label: "Home", to: "/", icon: Home },
   { label: "Bookmarks", to: "/bookmarks", icon: Bookmark },
-  { label: "Explore", to: "/explore", icon: Compass },
-  { label: "Search", to: "/explore", icon: Search, action: "search" },
+  { label: "Search", to: "/", icon: Search, action: "search" },
   { label: "AI Advisor", to: "/ai-advisor", icon: Sparkles },
   { label: "Login", to: "/login", icon: LogIn, action: "login" },
   { label: "Sign Up", to: "/signup", icon: UserPlus, action: "signup" },
@@ -31,7 +30,7 @@ export function TopNav({
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const visibleItems = mobile
     ? navItems.filter((item) => ["Home", "Bookmarks", "Search", "Login", "Sign Up"].includes(item.label))
-    : navItems.filter((item) => item.label !== "Bookmarks");
+    : navItems;
 
   return (
     <nav className={`top-nav ${mobile ? "top-nav-mobile" : ""} ${activeAction ? "modal-action-active" : ""}`} aria-label="Primary navigation">

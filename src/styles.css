@@ -927,20 +927,6 @@ button.top-nav-link {
   line-height: 1.02;
 }
 
-.explore-layout {
-  display: grid;
-  grid-template-columns: 390px minmax(0, 1fr);
-  min-height: calc(100vh - 94px);
-}
-
-.explore-sidebar {
-  position: relative;
-  z-index: 20;
-  padding: 22px;
-  border-right: 1px solid rgba(246, 166, 35, 0.45);
-  background: rgba(2, 10, 20, 0.88);
-}
-
 .search-box,
 .lux-input,
 .field-label select {
@@ -1043,20 +1029,6 @@ button.top-nav-link {
 .university-card span,
 .university-card small {
   color: #d7ccbb;
-}
-
-.explore-globe {
-  position: relative;
-  min-height: calc(100vh - 94px);
-  overflow: hidden;
-}
-
-.explore-details {
-  position: absolute;
-  right: 24px;
-  top: 24px;
-  z-index: 30;
-  width: min(380px, calc(100vw - 48px));
 }
 
 .anchored-details {
@@ -1448,8 +1420,7 @@ button.top-nav-link {
     display: none;
   }
 
-  .home-page,
-  .explore-layout {
+  .home-page {
     grid-template-columns: 1fr;
   }
 
@@ -1471,8 +1442,7 @@ button.top-nav-link {
     min-height: auto;
   }
 
-  .home-globe,
-  .explore-globe {
+  .home-globe {
     min-height: 760px;
   }
 
@@ -1554,13 +1524,11 @@ button.top-nav-link {
     padding: 24px;
   }
 
-  .home-globe,
-  .explore-globe {
+  .home-globe {
     min-height: 700px;
   }
 
-  .home-details,
-  .explore-details {
+  .home-details {
     position: relative;
     inset: auto;
     width: auto;
@@ -1575,10 +1543,6 @@ button.top-nav-link {
 
   .anchored-details::before {
     display: none;
-  }
-
-  .explore-sidebar {
-    padding: 16px;
   }
 
   .dashboard-grid,
@@ -2837,8 +2801,7 @@ button.top-nav-link {
   }
 }
 
-.home-details.anchored-details,
-.explore-details.anchored-details {
+.home-details.anchored-details {
   position: absolute;
   right: auto;
   bottom: auto;
@@ -3177,8 +3140,7 @@ button.top-nav-link {
     line-height: 1.15;
   }
 
-  .home-details.anchored-details,
-  .explore-details.anchored-details {
+  .home-details.anchored-details {
     left: auto;
     right: 10px;
     top: 126px;
