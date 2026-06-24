@@ -59,9 +59,11 @@ export function ScholarshipGuidePage({ slug }: { slug: string }) {
   const heroTitle = getHeroTitle(scholarship);
   const heroBullets = getHeroBullets(scholarship);
   const coverageItems = getCoverageItems(scholarship);
+  const searchedCountryName = countrySearch.trim();
   const filteredCountries = scholarship.sendingPartners.filter((country) =>
-    country.toLowerCase().includes(countrySearch.trim().toLowerCase()),
+    country.toLowerCase().includes(searchedCountryName.toLowerCase()),
   );
+  const hasCountrySearch = searchedCountryName.length > 0;
 
   return (
     <AppShell>
@@ -94,19 +96,38 @@ export function ScholarshipGuidePage({ slug }: { slug: string }) {
               <p className="scholarship-short-note">
                 Check whether your country is currently listed before choosing programs.
               </p>
-              <label className="country-search">
-                <Search size={17} />
+              <form
+                className="country-search"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  setCountrySearch(searchedCountryName);
+                }}
+              >
+                <button type="submit" aria-label="Search eligible countries">
+                  <Search size={17} />
+                </button>
                 <input
                   value={countrySearch}
                   onChange={(event) => setCountrySearch(event.target.value)}
-                  placeholder="Search country"
+                  placeholder="Search eligible country"
                   type="search"
+                  autoComplete="off"
                 />
-              </label>
-              <div className="country-count">
-                {filteredCountries.length} of {scholarship.sendingPartners.length} countries
-              </div>
-              <TagList items={filteredCountries} className="eligible-country-list" />
+              </form>
+              {filteredCountries.length > 0 ? (
+                <>
+                  <div className="country-count">
+                    {hasCountrySearch
+                      ? `${filteredCountries.length} matching ${filteredCountries.length === 1 ? "country" : "countries"}`
+                      : `${filteredCountries.length} of ${scholarship.sendingPartners.length} countries`}
+                  </div>
+                  <TagList items={filteredCountries} className="eligible-country-list" />
+                </>
+              ) : (
+                <p className="country-empty">
+                  {searchedCountryName} is not currently on this eligible countries list.
+                </p>
+              )}
             </Section>
 
             <Section icon={<Award size={20} />} title="What it covers">
