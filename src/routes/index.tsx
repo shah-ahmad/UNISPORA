@@ -70,6 +70,13 @@ function Index() {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("search") === "open") {
+      setSearchOpen(true);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!searchOpen) return;
     searchInputRef.current?.focus();
   }, [searchOpen]);
@@ -249,7 +256,7 @@ function Index() {
         )}
       </div>
       <SidebarHero />
-      <section className="home-globe">
+      <section className={`home-globe ${authMode ? "auth-active" : ""}`}>
         <button
           className="mobile-scroll-down"
           type="button"

@@ -19,7 +19,7 @@ export function AppShell({ children, showLogo = true }: { children: ReactNode; s
       <div className="app-shell-sidebar">
         <SidebarHero />
       </div>
-      <section className="app-shell-main">
+      <section className={`app-shell-main ${authMode ? "auth-active" : ""}`}>
         <div className="app-shell-globe-backdrop" aria-hidden="true" />
         <div className="app-shell-header">
           {showLogo ? <BrandLogo compact /> : <span />}
@@ -27,6 +27,7 @@ export function AppShell({ children, showLogo = true }: { children: ReactNode; s
             userLabel={userLabel}
             onSearchClick={() => {
               setAuthMode(undefined);
+              window.location.assign("/?search=open");
             }}
             onLoginClick={() => setAuthMode(user ? "account" : "login")}
             onSignupClick={() => setAuthMode("signup")}

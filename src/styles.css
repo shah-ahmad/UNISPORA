@@ -128,6 +128,11 @@ select {
     linear-gradient(180deg, rgba(2, 8, 18, 0.08), rgba(2, 8, 18, 0.86));
 }
 
+.app-shell-main.auth-active .app-shell-globe-backdrop {
+  filter: blur(8px) saturate(0.78);
+  opacity: 0.54;
+}
+
 .app-shell-header {
   position: sticky;
   top: 0;
@@ -233,6 +238,12 @@ select {
   z-index: 0;
 }
 
+.home-globe.auth-active .globe-stage,
+.home-globe.auth-active .home-details,
+.home-globe.auth-active .home-floating-controls {
+  filter: blur(8px) saturate(0.78);
+}
+
 .home-globe::before {
   content: "";
   position: absolute;
@@ -308,9 +319,10 @@ select {
 }
 
 .home-copy h1 {
-  max-width: 390px;
-  font-size: clamp(2.45rem, 2.85vw, 3.1rem);
-  line-height: 1.04;
+  max-width: none;
+  white-space: nowrap;
+  font-size: clamp(1.85rem, 2.08vw, 2.25rem);
+  line-height: 1.08;
   color: #fff1dc;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
 }
@@ -505,7 +517,7 @@ button.top-nav-link {
 .home-nav-slot {
   position: absolute;
   left: 50%;
-  top: 38px;
+  top: 24px;
   z-index: 50;
   transform: translateX(-50%);
   width: fit-content;
@@ -1845,7 +1857,7 @@ button.top-nav-link {
 }
 
 .home-page .home-floating-controls {
-  top: 82px !important;
+  top: 68px !important;
   right: 24px !important;
 }
 
