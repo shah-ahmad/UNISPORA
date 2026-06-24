@@ -193,8 +193,10 @@ select {
 .home-page {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(330px, 430px) minmax(0, 1fr);
-  background: #020913;
+  grid-template-columns: minmax(390px, 432px) minmax(0, 1fr);
+  background:
+    radial-gradient(circle at 56% 34%, rgba(26, 65, 108, 0.14), transparent 34rem),
+    #020913;
   overflow: hidden;
 }
 
@@ -203,11 +205,16 @@ select {
   z-index: 30;
   display: flex;
   flex-direction: column;
-  gap: 26px;
+  gap: 24px;
   min-height: 100vh;
-  padding: 30px 38px;
-  background: linear-gradient(90deg, rgba(2, 10, 20, 0.98), rgba(4, 15, 29, 0.82));
-  box-shadow: 34px 0 70px rgba(0, 0, 0, 0.34);
+  padding: 30px 44px 34px 48px;
+  background:
+    radial-gradient(circle at 34% 8%, rgba(31, 72, 105, 0.14), transparent 22rem),
+    linear-gradient(90deg, rgba(2, 10, 20, 0.99), rgba(3, 14, 27, 0.88));
+  box-shadow:
+    34px 0 70px rgba(0, 0, 0, 0.34),
+    inset -1px 0 0 rgba(246, 166, 35, 0.3),
+    inset -2px 0 22px rgba(246, 166, 35, 0.08);
 }
 
 .home-globe {
@@ -215,14 +222,19 @@ select {
   min-height: 100vh;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 45%, rgba(22, 52, 92, 0.16), transparent 34rem),
-    linear-gradient(180deg, #020813, #00050d);
+    radial-gradient(circle at 54% 48%, rgba(25, 63, 102, 0.2), transparent 38rem),
+    radial-gradient(circle at 86% 18%, rgba(246, 166, 35, 0.08), transparent 28rem),
+    linear-gradient(180deg, #020b17 0%, #020814 48%, #00050d 100%);
 }
 
 .globe-stage {
   position: absolute;
-  inset: 0;
+  inset: -118px -130px -112px -36px;
   z-index: 0;
+}
+
+.home-page .globe-stage .mapboxgl-canvas {
+  filter: brightness(0.66) saturate(0.76) contrast(1.18);
 }
 
 .home-globe::before {
@@ -254,8 +266,8 @@ select {
   z-index: 2;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 48%, transparent 0 36rem, rgba(0, 5, 13, 0.22) 54rem),
-    linear-gradient(90deg, rgba(0, 6, 15, 0.16), transparent 18%, transparent 82%, rgba(0, 6, 15, 0.18));
+    radial-gradient(circle at 52% 52%, transparent 0 36rem, rgba(0, 5, 13, 0.36) 58rem),
+    linear-gradient(90deg, rgba(0, 6, 15, 0.26), transparent 18%, transparent 82%, rgba(0, 6, 15, 0.24));
 }
 
 .home-details {
@@ -268,7 +280,7 @@ select {
 
 .brand-logo {
   display: inline-flex;
-  width: 285px;
+  width: 306px;
   max-width: 100%;
   filter:
     drop-shadow(0 7px 10px rgba(0, 0, 0, 0.42))
@@ -286,7 +298,7 @@ select {
 }
 
 .home-copy {
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .home-copy h1,
@@ -300,25 +312,27 @@ select {
 }
 
 .home-copy h1 {
-  max-width: 560px;
-  font-size: clamp(1.5rem, 2vw, 2.25rem);
-  line-height: 1.08;
+  max-width: 360px;
+  font-size: clamp(3rem, 3.55vw, 3.75rem);
+  line-height: 1.02;
+  color: #fff1dc;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
 }
 
 .gold-rule {
   display: block;
   width: 48px;
   height: 2px;
-  margin: 26px 0 20px;
+  margin: 28px 0 20px;
   background: linear-gradient(90deg, #f6a623, transparent);
 }
 
 .home-copy p {
-  max-width: 340px;
+  max-width: 342px;
   margin: 0;
   color: #e5d7c3;
-  font-size: 16px;
-  line-height: 1.75;
+  font-size: 15px;
+  line-height: 1.72;
 }
 
 .top-nav {
@@ -382,7 +396,7 @@ button.top-nav-link {
   justify-content: center;
   gap: 10px;
   min-width: 132px;
-  height: 42px;
+  height: 45px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 999px;
   color: #fff4df;
@@ -397,7 +411,7 @@ button.top-nav-link {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  min-height: 48px;
+  min-height: 47px;
   padding: 0 22px;
   border: 1px solid rgba(255, 255, 255, 0.26);
   border-radius: 8px;
@@ -416,7 +430,7 @@ button.top-nav-link {
 
 .stats-grid {
   display: grid;
-  gap: 4px;
+  gap: 5px;
   margin-top: auto;
 }
 
@@ -434,7 +448,7 @@ button.top-nav-link {
   display: grid;
   grid-template-columns: 58px 1fr;
   align-items: center;
-  min-height: 74px;
+  min-height: 72px;
   padding: 10px 16px;
 }
 
@@ -495,7 +509,7 @@ button.top-nav-link {
 .home-nav-slot {
   position: absolute;
   left: 50%;
-  top: 8px;
+  top: 38px;
   z-index: 50;
   transform: translateX(-50%);
   width: fit-content;
@@ -1783,6 +1797,29 @@ button.top-nav-link {
   box-shadow: none;
 }
 
+.home-page .top-nav {
+  height: 50px;
+  padding: 5px 10px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.28), transparent 36%),
+    linear-gradient(180deg, rgba(32, 41, 50, 0.72), rgba(5, 12, 21, 0.74));
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.36),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+    0 18px 44px rgba(0, 0, 0, 0.36);
+}
+
+.home-page .top-nav-link {
+  min-height: 38px;
+  padding: 0 16px;
+  font-size: 13px;
+}
+
+.home-page .top-nav-link.active {
+  color: #f6b75c;
+}
+
 /* ================================
    CTA Buttons Liquid Glass
 ================================ */
@@ -1845,6 +1882,46 @@ button.top-nav-link {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.55),
     0 18px 46px rgba(246, 166, 35, 0.2);
+}
+
+.home-page .home-floating-controls {
+  top: 82px !important;
+  right: 24px !important;
+}
+
+.home-page .control-pill {
+  min-width: 136px;
+  height: 46px;
+  background:
+    radial-gradient(circle at 24% 0%, rgba(255, 255, 255, 0.2), transparent 42%),
+    linear-gradient(180deg, rgba(31, 42, 51, 0.7), rgba(4, 11, 18, 0.78));
+}
+
+.home-sidebar .glass-button,
+.home-sidebar .stat-card {
+  border-color: rgba(222, 239, 248, 0.22);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.18), transparent 34%),
+    linear-gradient(180deg, rgba(34, 45, 54, 0.58), rgba(3, 11, 20, 0.72));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+    0 12px 34px rgba(0, 0, 0, 0.24);
+}
+
+.home-sidebar .glass-button {
+  min-height: 47px;
+  font-size: 14px;
+}
+
+.home-sidebar .stat-card {
+  border-radius: 8px;
+}
+
+.home-sidebar .stat-icon {
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.2), transparent 42%),
+    rgba(255, 255, 255, 0.055);
 }
 
 /* ================================
