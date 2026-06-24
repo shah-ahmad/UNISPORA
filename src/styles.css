@@ -3025,9 +3025,9 @@ button.top-nav-link {
   }
 
   .mobile-filter-popover-wrap .glass-select-menu {
-    top: auto;
-    bottom: calc(100% + 8px);
-    max-height: min(340px, 42vh);
+    top: calc(100% + 8px);
+    bottom: auto;
+    max-height: min(230px, 28vh);
   }
 
   .home-globe:has(.mobile-filter-popover-wrap .filter-popover) .globe-stage,
@@ -3201,9 +3201,9 @@ button.top-nav-link {
 
   .home-details.anchored-details {
     left: auto;
-    right: 4vw;
+    right: 10px;
     top: 108px;
-    width: min(92vw, 390px);
+    width: clamp(300px, 78vw, 340px);
     max-height: min(66vh, 560px);
   }
 
