@@ -40,24 +40,46 @@ select {
 }
 
 .app-shell {
+  display: grid;
+  grid-template-columns: minmax(330px, 430px) minmax(0, 1fr);
   min-height: 100vh;
   background:
     linear-gradient(180deg, rgba(5, 15, 29, 0.96), rgba(2, 8, 18, 1)),
     #020913;
 }
 
+.app-shell-sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  align-self: start;
+  min-height: 100vh;
+}
+
+.app-shell-sidebar .home-sidebar {
+  min-height: 100vh;
+}
+
+.app-shell-main {
+  min-width: 0;
+  min-height: 100vh;
+}
+
 .app-shell-header {
   position: sticky;
   top: 0;
   z-index: 70;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  display: flex;
   align-items: center;
-  gap: 18px;
-  width: min(100%, 1660px);
+  justify-content: flex-end;
+  width: 100%;
   margin: 0 auto;
   padding: 20px 40px 12px;
   pointer-events: none;
+}
+
+.app-shell-header > .brand-logo {
+  display: none;
 }
 
 .app-shell-header .brand-logo,
@@ -67,7 +89,7 @@ select {
 
 .app-shell-header .top-nav {
   justify-self: end;
-  max-width: min(850px, calc(100vw - 300px));
+  max-width: min(850px, calc(100vw - 510px));
   overflow: visible;
 }
 
@@ -1306,13 +1328,26 @@ button.top-nav-link {
 }
 
 @media (max-width: 1180px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell-sidebar {
+    display: none;
+  }
+
   .home-page,
   .explore-layout {
     grid-template-columns: 1fr;
   }
 
   .app-shell-header {
+    justify-content: space-between;
     padding: 18px 22px 10px;
+  }
+
+  .app-shell-header > .brand-logo {
+    display: inline-flex;
   }
 
   .app-shell-header .top-nav {
@@ -1341,6 +1376,7 @@ button.top-nav-link {
 
 @media (max-width: 720px) {
   .app-shell-header {
+    display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     gap: 10px;
