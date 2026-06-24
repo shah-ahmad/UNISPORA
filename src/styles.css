@@ -3205,12 +3205,17 @@ button.top-nav-link {
     top: 108px;
     width: clamp(300px, 78vw, 340px);
     max-height: min(66vh, 560px);
+    z-index: 160;
   }
 
-  .home-globe:has(.home-details.anchored-details) .globe-stage,
+  .home-globe:has(.home-details.anchored-details) .globe-stage {
+    filter: blur(7px) saturate(0.76);
+  }
+
   .home-globe:has(.home-details.anchored-details) .mobile-map-actions,
   .home-globe:has(.home-details.anchored-details) .mobile-scroll-down {
-    filter: blur(7px) saturate(0.76);
+    opacity: 0;
+    pointer-events: none;
   }
 
   .details-panel {
