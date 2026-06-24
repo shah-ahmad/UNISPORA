@@ -229,12 +229,8 @@ select {
 
 .globe-stage {
   position: absolute;
-  inset: -118px -130px -112px -36px;
+  inset: 0 -52px -58px -12px;
   z-index: 0;
-}
-
-.home-page .globe-stage .mapboxgl-canvas {
-  filter: brightness(0.66) saturate(0.76) contrast(1.18);
 }
 
 .home-globe::before {
@@ -266,8 +262,8 @@ select {
   z-index: 2;
   pointer-events: none;
   background:
-    radial-gradient(circle at 52% 52%, transparent 0 36rem, rgba(0, 5, 13, 0.36) 58rem),
-    linear-gradient(90deg, rgba(0, 6, 15, 0.26), transparent 18%, transparent 82%, rgba(0, 6, 15, 0.24));
+    radial-gradient(circle at 52% 52%, transparent 0 34rem, rgba(0, 5, 13, 0.3) 56rem),
+    linear-gradient(90deg, rgba(0, 6, 15, 0.22), transparent 18%, transparent 82%, rgba(0, 6, 15, 0.2));
 }
 
 .home-details {
@@ -312,9 +308,9 @@ select {
 }
 
 .home-copy h1 {
-  max-width: 360px;
-  font-size: clamp(3rem, 3.55vw, 3.75rem);
-  line-height: 1.02;
+  max-width: 390px;
+  font-size: clamp(2.45rem, 2.85vw, 3.1rem);
+  line-height: 1.04;
   color: #fff1dc;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
 }

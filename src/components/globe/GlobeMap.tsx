@@ -65,8 +65,8 @@ export function GlobeMap({
         container: containerRef.current,
         style: selectedMapStyle,
         projection: "globe",
-        zoom: 1.08,
-        center: [18, 28],
+        zoom: 0.9,
+        center: [0, 25],
         bearing: -20,
         pitch: 0,
         maxZoom: 16,
@@ -85,20 +85,20 @@ export function GlobeMap({
         map.resize();
         updateSelectedPoint();
         map.setFog({
-          color: "rgb(2, 8, 18)",
-          "high-color": "rgb(37, 65, 91)",
-          "horizon-blend": 0.06,
-          "space-color": "rgb(0, 4, 11)",
+          color: "rgb(4, 11, 25)",
+          "high-color": "rgb(74, 117, 166)",
+          "horizon-blend": 0.08,
+          "space-color": "rgb(0, 3, 10)",
           "star-intensity": globeStyle === "satellite" ? 0.55 : 1,
         });
 
         setTimeout(() => {
           map.easeTo({
-            center: [23, 35],
-            zoom: 2.72,
-            bearing: 18,
-            pitch: 6,
-            padding: { top: 18, bottom: 120, left: 0, right: 0 },
+            center: [19.5, 47.1],
+            zoom: 2.2,
+            bearing: 20,
+            pitch: 10,
+            padding: { top: 40, bottom: 180, left: 0, right: 0 },
             duration: 2500,
             easing: (t: number) => t * (2 - t),
           });
@@ -119,10 +119,10 @@ export function GlobeMap({
           filter: ["has", "point_count"],
           paint: {
             "circle-color": "#f6b75c",
-            "circle-opacity": 0.48,
+            "circle-opacity": 0.38,
             "circle-emissive-strength": 1,
-            "circle-radius": ["step", ["get", "point_count"], 28, 5, 36, 10, 48],
-            "circle-blur": 0.82,
+            "circle-radius": ["step", ["get", "point_count"], 24, 5, 32, 10, 42],
+            "circle-blur": 0.78,
           },
         });
 
@@ -132,13 +132,13 @@ export function GlobeMap({
           source: "universities",
           filter: ["has", "point_count"],
           paint: {
-            "circle-color": "#141414",
-            "circle-opacity": 0.62,
+            "circle-color": "#111820",
+            "circle-opacity": 0.68,
             "circle-emissive-strength": 0.7,
             "circle-radius": ["step", ["get", "point_count"], 15, 5, 20, 10, 26],
-            "circle-stroke-width": 2.2,
-            "circle-stroke-color": "#ffd493",
-            "circle-stroke-opacity": 0.95,
+            "circle-stroke-width": 2.4,
+            "circle-stroke-color": "#f6b75c",
+            "circle-stroke-opacity": 0.88,
           },
         });
 
