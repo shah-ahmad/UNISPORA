@@ -321,7 +321,7 @@ select {
 .home-copy h1 {
   max-width: none;
   white-space: nowrap;
-  font-size: clamp(1.85rem, 2.08vw, 2.25rem);
+  font-size: clamp(1.45rem, 1.68vw, 1.78rem);
   line-height: 1.08;
   color: #fff1dc;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
