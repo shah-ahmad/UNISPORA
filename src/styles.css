@@ -212,7 +212,7 @@ select {
   flex-direction: column;
   gap: 24px;
   min-height: 100vh;
-  padding: 30px 44px 34px 48px;
+  padding: 30px 34px 34px 40px;
   background:
     radial-gradient(circle at 34% 8%, rgba(31, 72, 105, 0.14), transparent 22rem),
     linear-gradient(90deg, rgba(2, 10, 20, 0.99), rgba(3, 14, 27, 0.88));
@@ -234,7 +234,7 @@ select {
 
 .globe-stage {
   position: absolute;
-  inset: 0 -52px -58px -12px;
+  inset: -54px -52px -12px -12px;
   z-index: 0;
 }
 
@@ -336,11 +336,11 @@ select {
 }
 
 .home-copy p {
-  max-width: 342px;
+  max-width: 372px;
   margin: 0;
   color: #e5d7c3;
-  font-size: 15px;
-  line-height: 1.72;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .top-nav {
