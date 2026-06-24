@@ -3015,8 +3015,25 @@ button.top-nav-link {
     top: 0;
     width: 100%;
     max-height: min(430px, calc(100vh - 214px));
-    overflow-y: auto;
+    overflow: visible;
     padding: 16px;
+  }
+
+  .mobile-filter-popover-wrap .filter-popover-header {
+    position: relative;
+    z-index: 150;
+  }
+
+  .mobile-filter-popover-wrap .glass-select-menu {
+    top: auto;
+    bottom: calc(100% + 8px);
+    max-height: min(340px, 42vh);
+  }
+
+  .home-globe:has(.mobile-filter-popover-wrap .filter-popover) .globe-stage,
+  .home-globe:has(.mobile-filter-popover-wrap .filter-popover) .mobile-map-actions,
+  .home-globe:has(.mobile-filter-popover-wrap .filter-popover) .mobile-scroll-down {
+    filter: blur(7px) saturate(0.76);
   }
 
   .home-floating-controls {
@@ -3184,19 +3201,25 @@ button.top-nav-link {
 
   .home-details.anchored-details {
     left: auto;
-    right: 10px;
-    top: 126px;
-    width: clamp(270px, 44vw, 340px);
-    max-height: min(46vh, 360px);
+    right: 4vw;
+    top: 108px;
+    width: min(92vw, 390px);
+    max-height: min(66vh, 560px);
+  }
+
+  .home-globe:has(.home-details.anchored-details) .globe-stage,
+  .home-globe:has(.home-details.anchored-details) .mobile-map-actions,
+  .home-globe:has(.home-details.anchored-details) .mobile-scroll-down {
+    filter: blur(7px) saturate(0.76);
   }
 
   .details-panel {
-    max-height: min(46vh, 360px);
+    max-height: min(66vh, 560px);
     border-radius: 18px;
   }
 
   .details-scroll {
-    max-height: min(calc(46vh - 20px), 340px);
+    max-height: min(calc(66vh - 20px), 540px);
     padding: 16px 14px 14px;
   }
 
