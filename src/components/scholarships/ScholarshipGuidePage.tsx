@@ -10,6 +10,7 @@ import {
   FileText,
   GraduationCap,
   Languages,
+  Search,
   ShieldCheck,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
@@ -20,6 +21,7 @@ import type { Scholarship } from "@/data/scholarships";
 export function ScholarshipGuidePage({ slug }: { slug: string }) {
   const fallbackScholarship = getScholarshipBySlug(slug);
   const [scholarship, setScholarship] = useState<Scholarship | undefined>(fallbackScholarship);
+  const [countrySearch, setCountrySearch] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -54,6 +56,13 @@ export function ScholarshipGuidePage({ slug }: { slug: string }) {
     );
   }
 
+  const heroTitle = getHeroTitle(scholarship);
+  const heroBullets = getHeroBullets(scholarship);
+  const coverageItems = getCoverageItems(scholarship);
+  const filteredCountries = scholarship.sendingPartners.filter((country) =>
+    country.toLowerCase().includes(countrySearch.trim().toLowerCase()),
+  );
+
   return (
     <AppShell>
       <section className="scholarship-page">
@@ -62,8 +71,12 @@ export function ScholarshipGuidePage({ slug }: { slug: string }) {
             <ArrowLeft size={18} /> Back to globe
           </Link>
           <p className="text-sm uppercase tracking-[0.24em] text-[#f6b75c]">Scholarship guide</p>
-          <h1>{scholarship.title}</h1>
-          <p>{scholarship.summary}</p>
+          <h1>{heroTitle}</h1>
+          <ul className="scholarship-hero-points">
+            {heroBullets.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
 
           <div className="scholarship-quick-grid">
             {scholarship.quickFacts.map((fact) => (
@@ -77,8 +90,27 @@ export function ScholarshipGuidePage({ slug }: { slug: string }) {
 
         <div className="scholarship-content">
           <article className="glass-card scholarship-article">
+            <Section icon={<Award size={20} />} title="Eligible countries">
+              <p className="scholarship-short-note">
+                Check whether your country is currently listed before choosing programs.
+              </p>
+              <label className="country-search">
+                <Search size={17} />
+                <input
+                  value={countrySearch}
+                  onChange={(event) => setCountrySearch(event.target.value)}
+                  placeholder="Search country"
+                  type="search"
+                />
+              </label>
+              <div className="country-count">
+                {filteredCountries.length} of {scholarship.sendingPartners.length} countries
+              </div>
+              <TagList items={filteredCountries} className="eligible-country-list" />
+            </Section>
+
             <Section icon={<Award size={20} />} title="What it covers">
-              <Bullets items={scholarship.benefits} />
+              <CoverageGrid items={coverageItems} />
             </Section>
 
             <Section icon={<ShieldCheck size={20} />} title="Who can apply">
@@ -86,7 +118,7 @@ export function ScholarshipGuidePage({ slug }: { slug: string }) {
             </Section>
 
             <Section icon={<Languages size={20} />} title="English requirement">
-              <p>{scholarship.languageNote}</p>
+              <p>{formatScholarshipText(scholarship.languageNote)}</p>
             </Section>
 
             <Section icon={<GraduationCap size={20} />} title="Study levels">
@@ -104,25 +136,13 @@ export function ScholarshipGuidePage({ slug }: { slug: string }) {
             <Section icon={<CalendarDays size={20} />} title="Application process">
               <ol className="scholarship-steps">
                 {scholarship.process.map((step) => (
-                  <li key={step}>{step}</li>
+                  <li key={step}>{formatScholarshipText(step)}</li>
                 ))}
               </ol>
             </Section>
 
             <Section icon={<CheckCircle2 size={20} />} title="Important notes">
               <Bullets items={scholarship.importantNotes} />
-            </Section>
-
-            <Section icon={<Award size={20} />} title="Eligible Sending Partners">
-              <p>
-                Eligibility depends on official agreements, partner organizations, and the
-                current application cycle. Students should always confirm the latest rules
-                on the official website.
-              </p>
-              <details className="scholarship-countries">
-                <summary>View sending partners</summary>
-                <TagList items={scholarship.sendingPartners} />
-              </details>
             </Section>
 
             {scholarship.officialUrl ? (
@@ -137,19 +157,81 @@ export function ScholarshipGuidePage({ slug }: { slug: string }) {
   );
 }
 
+function getHeroTitle(scholarship: Scholarship) {
+  return scholarship.slug === "stipendium-hungaricum"
+    ? "Stipendium Hungaricum"
+    : scholarship.title.replace(/\s+Scholarship$/i, "");
+}
+
+function getHeroBullets(scholarship: Scholarship) {
+  if (scholarship.slug === "stipendium-hungaricum") {
+    return [
+      "Hungarian Government scholarship for international students.",
+      "Covers tuition, monthly stipend, accommodation support, and medical insurance.",
+      "Available for eligible countries through the official application system.",
+    ];
+  }
+
+  return scholarship.summary
+    .split(/(?<=\.)\s+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean)
+    .slice(0, 3);
+}
+
+function getCoverageItems(scholarship: Scholarship) {
+  if (scholarship.slug === "stipendium-hungaricum") {
+    return [
+      { label: "Tuition", value: "Full tuition", detail: "Awarded program tuition is covered." },
+      { label: "Accommodation", value: "40,000 HUF", detail: "Monthly housing contribution if dormitory is not available." },
+      { label: "Stipend", value: "43,700 HUF", detail: "Monthly stipend for bachelor, master, one-tier, and non-degree studies." },
+      { label: "Insurance", value: "Included", detail: "Hungarian health care services plus supplementary medical insurance." },
+    ];
+  }
+
+  return scholarship.benefits.map((benefit) => {
+    const [value, ...rest] = benefit.split(".");
+    return {
+      label: "Benefit",
+      value: value.trim(),
+      detail: rest.join(".").trim(),
+    };
+  });
+}
+
+function CoverageGrid({ items }: { items: { label: string; value: string; detail?: string }[] }) {
+  return (
+    <div className="coverage-grid">
+      {items.map((item) => (
+        <div className="coverage-card" key={`${item.label}-${item.value}`}>
+          <span>{item.label}</span>
+          <strong>{item.value}</strong>
+          {item.detail ? <p>{item.detail}</p> : null}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function Bullets({ items }: { items: string[] }) {
   return (
     <ul className="scholarship-bullets">
       {items.map((item) => (
-        <li key={item}>{item}</li>
+        <li key={item}>{formatScholarshipText(item)}</li>
       ))}
     </ul>
   );
 }
 
-function TagList({ items }: { items: string[] }) {
+function formatScholarshipText(text: string) {
+  return text
+    .replace(/\bSending Partners\b/g, "eligible-country authorities")
+    .replace(/\bSending Partner\b/g, "eligible-country authority");
+}
+
+function TagList({ items, className = "" }: { items: string[]; className?: string }) {
   return (
-    <div className="scholarship-tags">
+    <div className={`scholarship-tags ${className}`}>
       {items.map((item) => (
         <span key={item}>{item}</span>
       ))}
