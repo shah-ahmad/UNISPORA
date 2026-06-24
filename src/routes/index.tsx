@@ -279,7 +279,7 @@ function Index() {
           {renderFilterPopover("mobile-filter-popover")}
         </div>
         <div className="absolute left-0 top-0 z-20 hidden h-full w-px bg-gradient-to-b from-transparent via-[#f6a623] to-transparent lg:block" />
-        <div className="home-nav-slot absolute right-[220px] top-2 z-50 hidden xl:block">
+        <div className="home-nav-slot hidden xl:block">
           {searchOpen ? (
             <div className="home-search-popover">
               <label className="home-search-box">

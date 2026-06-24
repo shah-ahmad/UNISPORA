@@ -71,7 +71,7 @@ select {
   z-index: 70;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   width: 100%;
   margin: 0 auto;
   padding: 20px 40px 12px;
@@ -88,7 +88,7 @@ select {
 }
 
 .app-shell-header .top-nav {
-  justify-self: end;
+  justify-self: center;
   max-width: min(850px, calc(100vw - 510px));
   overflow: visible;
 }
@@ -396,6 +396,11 @@ button.top-nav-link {
 }
 
 .home-nav-slot {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  z-index: 50;
+  transform: translateX(-50%);
   width: fit-content;
   max-width: calc(100vw - 360px);
 }
