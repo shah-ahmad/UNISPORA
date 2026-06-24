@@ -7,7 +7,7 @@ import { BrandLogo } from "@/components/layout/BrandLogo";
 import { SidebarHero } from "@/components/layout/SidebarHero";
 import { TopNav } from "@/components/layout/TopNav";
 import { UniversityDetailsPanel } from "@/components/globe/UniversityDetailsPanel";
-import { AccountCard, Auth } from "@/routes/login";
+import { AccountCard, Auth } from "@/components/auth/AuthPanel";
 import type { University } from "@/types/university";
 import { useAuth } from "@/hooks/useAuth";
 import { useUniversities } from "@/hooks/useUniversities";

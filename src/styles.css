@@ -61,7 +61,39 @@ select {
 }
 
 .app-shell-main {
+  position: relative;
+  isolation: isolate;
   min-width: 0;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.app-shell-globe-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.5;
+  filter: blur(10px) saturate(0.82) brightness(0.72);
+  transform: scale(1.04);
+  pointer-events: none;
+}
+
+.app-shell-globe-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 30%, transparent 0 22rem, rgba(2, 8, 18, 0.58) 42rem),
+    linear-gradient(180deg, rgba(2, 8, 18, 0.22), rgba(2, 8, 18, 0.88));
+}
+
+.app-shell-globe-backdrop .mapboxgl-canvas-container,
+.app-shell-globe-backdrop .mapboxgl-canvas {
+  pointer-events: none;
+}
+
+.app-shell-globe-backdrop .globe-map {
   min-height: 100vh;
 }
 
@@ -76,6 +108,40 @@ select {
   margin: 0 auto;
   padding: 20px 40px 12px;
   pointer-events: none;
+}
+
+.app-shell-header,
+.app-shell-content {
+  position: relative;
+  z-index: 2;
+}
+
+.app-shell-content {
+  min-height: calc(100vh - 88px);
+  transition: filter 0.22s ease, opacity 0.22s ease;
+}
+
+.app-shell-content.is-blurred {
+  filter: blur(8px) saturate(0.8);
+  opacity: 0.62;
+}
+
+.shell-auth-modal-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: start center;
+  padding: 92px 24px 24px;
+  background:
+    radial-gradient(circle at 54% 18%, rgba(255, 212, 147, 0.12), transparent 30%),
+    rgba(1, 6, 14, 0.3);
+  backdrop-filter: blur(8px) saturate(88%);
+  -webkit-backdrop-filter: blur(8px) saturate(88%);
+}
+
+.shell-auth-modal-layer .auth-modal {
+  width: min(440px, calc(100vw - 32px));
 }
 
 .app-shell-header > .brand-logo {
