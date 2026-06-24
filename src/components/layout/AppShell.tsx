@@ -3,9 +3,7 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import { X } from "lucide-react";
 import { AccountCard, Auth } from "@/components/auth/AuthPanel";
-import { GlobeMap } from "@/components/globe/GlobeMap";
 import { useAuth } from "@/hooks/useAuth";
-import { useUniversities } from "@/hooks/useUniversities";
 import { BrandLogo } from "./BrandLogo";
 import { SidebarHero } from "./SidebarHero";
 import { TopNav } from "./TopNav";
@@ -14,7 +12,6 @@ type AuthMode = "login" | "signup" | "account";
 
 export function AppShell({ children, showLogo = true }: { children: ReactNode; showLogo?: boolean }) {
   const { user } = useAuth();
-  const { universities } = useUniversities();
   const navigate = useNavigate();
   const userLabel = user?.name || user?.email?.split("@")[0];
   const [authMode, setAuthMode] = useState<AuthMode>();
@@ -25,14 +22,15 @@ export function AppShell({ children, showLogo = true }: { children: ReactNode; s
         <SidebarHero />
       </div>
       <section className="app-shell-main">
-        <div className="app-shell-globe-backdrop" aria-hidden="true">
-          <GlobeMap universities={universities} />
-        </div>
+        <div className="app-shell-globe-backdrop" aria-hidden="true" />
         <div className="app-shell-header">
           {showLogo ? <BrandLogo compact /> : <span />}
           <TopNav
             userLabel={userLabel}
-            onSearchClick={() => void navigate({ to: "/explore" })}
+            onSearchClick={() => {
+              setAuthMode(undefined);
+              void navigate({ to: "/explore" });
+            }}
             onLoginClick={() => setAuthMode(user ? "account" : "login")}
             onSignupClick={() => setAuthMode("signup")}
             onAccountClick={() => setAuthMode("account")}
