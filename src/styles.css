@@ -1047,7 +1047,7 @@ button.top-nav-link {
   right: auto;
   bottom: auto;
   left: min(calc(var(--anchor-x, 24px) + 18px), calc(100% - 408px));
-  top: max(16px, min(calc(var(--anchor-y, 120px) - 210px), calc(100% - 590px)));
+  top: max(16px, min(calc(var(--anchor-y, 120px) - 250px), calc(100% - 590px)));
   transition: none;
   will-change: left, top;
 }
@@ -2850,7 +2850,7 @@ button.top-nav-link {
   margin: 0;
   width: min(380px, calc(100vw - 24px));
   left: min(calc(var(--anchor-x, 24px) + 18px), calc(100% - min(380px, calc(100vw - 24px)) - 12px));
-  top: max(12px, min(calc(var(--anchor-y, 120px) - 210px), calc(100% - min(560px, calc(100vh - 120px)) - 12px)));
+  top: max(12px, min(calc(var(--anchor-y, 120px) - 250px), calc(100% - min(560px, calc(100vh - 120px)) - 12px)));
   transition: none;
   will-change: left, top;
 }
