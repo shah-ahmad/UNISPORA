@@ -8,9 +8,9 @@ export function SidebarHero() {
     <aside className="home-sidebar">
       <BrandLogo />
       <div className="home-copy">
-        <h1>Find your future university.</h1>
+        <h1>Where Ambitions Go Global</h1>
         <span className="gold-rule" />
-        <p>Browse universities by continent and country, click pins on the globe, and compare programs, tuition, languages, and scholarships.</p>
+        <p>UniSpora helps students discover and choose the right university anywhere in the world. Through an immersive 3D globe experience, students can explore universities worldwide, compare programs, tuition fees, languages, and scholarships, and access reliable information to make informed study abroad decisions. By connecting students with mentors, educational institutions, and trusted partners, UniSpora aims to make international education more transparent, accessible, and student-centered.</p>
       </div>
       <div className="grid gap-3">
         <GlassLink href="/">
