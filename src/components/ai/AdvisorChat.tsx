@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Functions, ExecutionMethod } from "appwrite";
 import { Send, X, Sparkles } from "lucide-react";
@@ -26,6 +26,13 @@ function saveDraft(text: string) {
 
 export function AdvisorChat() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  async function authenticate(to: "/login" | "/signup") {
+    pendingDraft.current = input;
+    saveDraft(input);
+    await navigate({ to });
+    setOpen(false);
+  }
   const [open, setOpen] = useState(false);
   const [university, setUniversity] = useState<University>();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -116,8 +123,8 @@ export function AdvisorChat() {
       {authPrompt && !user?.emailVerification ? <div className="advisor-auth-prompt" role="alert">
         <p>Log in or sign up to send your message.</p>
         <div>
-          <Link className="panel-action primary" to="/login" onClick={() => { pendingDraft.current = input; saveDraft(input); setOpen(false); }}>Log in</Link>
-          <Link className="panel-action" to="/signup" onClick={() => { pendingDraft.current = input; saveDraft(input); setOpen(false); }}>Sign up</Link>
+          <button type="button" className="panel-action primary" onClick={() => void authenticate("/login")}>Log in</button>
+          <button type="button" className="panel-action" onClick={() => void authenticate("/signup")}>Sign up</button>
         </div>
         <small>Your draft will be here when you return.</small>
       </div> : null}
