@@ -23,6 +23,8 @@ export function Auth({
   const { user, login, signup: createAccount, signInWithGoogle } = useAuth();
   const userLabel = user?.name || user?.email?.split("@")[0] || "UniSpora user";
   const [role, setRole] = useState<AuthRole>("student");
+  const [fullName, setFullName] = useState("");
+  const [country, setCountry] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -38,6 +40,11 @@ export function Auth({
     event.preventDefault();
     setMessage("");
 
+    if (signup && (!fullName.trim() || !country.trim())) {
+      setMessage("Enter your name and country.");
+      return;
+    }
+
     if (!email.trim() || !password) {
       setMessage("Enter your email and password.");
       return;
@@ -46,7 +53,9 @@ export function Auth({
     setSubmitting(true);
     try {
       if (signup) {
-        await createAccount(email.trim(), password, role);
+        await createAccount(email.trim(), password, role, fullName.trim(), country.trim());
+        setFullName("");
+        setCountry("");
         setEmail("");
         setPassword("");
         setMessage("Check your inbox to verify your email. You can log in after verification.");
@@ -77,9 +86,28 @@ export function Auth({
               <button className={role === "consultant" ? "active" : ""} type="button" onClick={() => setRole("consultant")}>I am a consultant</button>
             </div>
           ) : null}
-          <input className="lux-input" placeholder="Email address" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" type="email" />
-          <input className="lux-input" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete={signup ? "new-password" : "current-password"} type="password" minLength={8} />
-          {message ? <p className="auth-message">{message}</p> : null}
+          {signup ? (
+            <label className="auth-field">
+              <span>Full name</span>
+              <input className="lux-input" placeholder="Your full name" value={fullName} onChange={(event) => setFullName(event.target.value)} autoComplete="name" maxLength={128} required />
+            </label>
+          ) : null}
+          <label className="auth-field">
+            {signup ? <span>Email address</span> : null}
+            <input className="lux-input" aria-label="Email address" placeholder="Email address" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" type="email" required />
+          </label>
+          <label className="auth-field">
+            {signup ? <span>Set password</span> : null}
+            <input className="lux-input" aria-label={signup ? "Set password" : "Password"} placeholder={signup ? "Create a password" : "Password"} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete={signup ? "new-password" : "current-password"} type="password" minLength={8} required />
+            {signup ? <small>Use at least 8 characters.</small> : null}
+          </label>
+          {signup ? (
+            <label className="auth-field">
+              <span>Country</span>
+              <input className="lux-input" placeholder="Your country" value={country} onChange={(event) => setCountry(event.target.value)} autoComplete="country-name" maxLength={100} required />
+            </label>
+          ) : null}
+          {message ? <p className="auth-message" role="status">{message}</p> : null}
           <button className="panel-action primary justify-center" type="submit" disabled={submitting}>{submitting ? "Please wait..." : action}</button>
           <div className="auth-divider"><span>or</span></div>
           <button className="google-auth-button" type="button" onClick={signInWithGoogle}>

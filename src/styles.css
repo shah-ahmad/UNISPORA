@@ -653,6 +653,8 @@ button.top-nav-link {
 }
 
 .auth-modal .auth-card {
+  max-height: calc(100dvh - 110px);
+  overflow-y: auto;
   width: 100%;
   padding: 28px;
   border-radius: 26px;
@@ -1164,6 +1166,24 @@ button.top-nav-link {
 .auth-card h1 {
   font-size: 42px;
   line-height: 1;
+}
+
+.auth-field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: #fff4df;
+  font-size: 14px;
+}
+
+.auth-field .lux-input {
+  width: 100%;
+  min-width: 0;
+}
+
+.auth-field small {
+  color: #c4c9c9;
+  font-size: 12px;
 }
 
 .role-choice {

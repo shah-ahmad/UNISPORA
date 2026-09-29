@@ -7,6 +7,8 @@ import { sendVerificationEmail as sendUniSporaVerificationEmail, verifyEmailToke
 type AuthRole = "student" | "consultant";
 type UniSporaPreferences = Models.Preferences & {
   role?: AuthRole;
+  fullName?: string;
+  country?: string;
 };
 
 type PendingSignup = {
@@ -20,7 +22,7 @@ type AuthContextValue = {
   user?: Models.User<UniSporaPreferences>;
   loading: boolean;
   login: (email: string, password: string) => Promise<Models.User<UniSporaPreferences>>;
-  signup: (email: string, password: string, role: AuthRole) => Promise<Models.User<UniSporaPreferences>>;
+  signup: (email: string, password: string, role: AuthRole, fullName: string, country: string) => Promise<Models.User<UniSporaPreferences>>;
   sendVerificationEmail: () => Promise<void>;
   verifyEmail: (token: string) => Promise<Models.User<UniSporaPreferences> | undefined>;
   signInWithGoogle: () => void;
@@ -89,7 +91,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(currentUser);
       return currentUser;
     },
-    async signup(email, password, role) {
+    async signup(email, password, role, fullName, country) {
+      if (!fullName.trim() || !country.trim()) throw new Error("Enter your name and country.");
       const reservedUsername = await reserveAutomaticUsername(email);
       try {
         await account.create({ userId: ID.unique(), email, password, name: reservedUsername });
@@ -98,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
       await account.createEmailPasswordSession(email, password);
-      await account.updatePrefs({ role });
+      await account.updatePrefs({ prefs: { role, fullName: fullName.trim(), country: country.trim() } });
       const currentUser = await account.get() as Models.User<UniSporaPreferences>;
       await sendUniSporaVerificationEmail(currentUser.$id, currentUser.email);
       savePendingSignup({
@@ -126,7 +129,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       await account.deleteSession("current").catch(() => undefined);
       await account.createEmailPasswordSession(pendingSignup.email, pendingSignup.password);
-      await account.updatePrefs({ role: pendingSignup.role }).catch(() => undefined);
       const currentUser = await account.get() as Models.User<UniSporaPreferences>;
       clearPendingSignup();
       setUser(currentUser);
