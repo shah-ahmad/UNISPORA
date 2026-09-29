@@ -132,3 +132,7 @@ GitHub: [shah-ahmad/UNISPORA](https://github.com/shah-ahmad/UNISPORA)
 Email verification uses Appwrite Auth and its default Cloud email service. No custom email function, email provider key, or server API key is needed. Register `unispora.com`, `www.unispora.com`, and your development hostname as Web platforms in Appwrite.
 
 Sign-up sends a verification email to the authenticated account, then ends the temporary session. The `/verify` page exchanges Appwrite's `userId` and `secret` query parameters; the user then logs in normally. Unverified login attempts send a fresh link and end the session. Passwords are never saved for automatic login. Older verification links must be replaced by logging in to request a new email.
+
+## AI Advisor
+
+AI Advisor opens a floating chat without navigating or changing the globe. Messages are sent to an Appwrite Function (`unispora-ai-advisor`) using a server-only `GEMINI_API_KEY` secret. The function requires verified users, validates their Appwrite JWT, limits message/history/output sizes, and uses Gemini 3.1 Flash-Lite Preview. A five-request-per-minute per-user throttle is local to each function instance; it is not a global spending cap. Configure provider quotas for a hard usage ceiling. Conversation history stays in memory and clears on account changes. Execution logging is disabled.

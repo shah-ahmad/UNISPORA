@@ -1,3 +1,4 @@
+import { openAdvisor } from "@/components/ai/AdvisorChat";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
@@ -266,9 +267,9 @@ function Index() {
           <ArrowDown size={18} />
         </button>
         <div className="mobile-map-actions">
-          <Link className="mobile-map-action" to="/ai-advisor" search={{ university: undefined }} aria-label="AI Advisor">
+          <button type="button" className="mobile-map-action" onClick={() => openAdvisor()} aria-label="AI Advisor">
             <Sparkles size={18} />
-          </Link>
+          </button>
           <button
             className="mobile-map-action mobile-filter-pill"
             type="button"

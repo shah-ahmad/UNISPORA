@@ -13,7 +13,7 @@ export const Route = createFileRoute("/ai-advisor")({
 function AIAdvisor() {
   const { university: universityId } = Route.useSearch();
   const { universities, loading } = useUniversities();
-  const university = universities.find((item) => item.id === universityId) ?? universities[0];
+  const university = universities.find((item) => item.id === universityId);
 
   return (
     <AppShell>

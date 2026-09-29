@@ -1,3 +1,4 @@
+import { openAdvisor } from "@/components/ai/AdvisorChat";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import type { ReactNode } from "react";
@@ -32,7 +33,7 @@ export function UniversityDetailsPanel({
 
     function closeOnOutsidePointer(event: PointerEvent) {
       const panel = panelRef.current;
-      if (!panel || panel.contains(event.target as Node)) return;
+      if (!panel || panel.contains(event.target as Node) || (event.target as Element).closest?.(".advisor-chat")) return;
       close();
     }
 
@@ -75,7 +76,7 @@ export function UniversityDetailsPanel({
         <Info icon={<Languages size={18} />} label="Language requirements" value={<LanguageRequirements university={university} />} tone="teal" />
         <Info icon={<Award size={18} />} label="Scholarships" value={<ScholarshipList university={university} />} tone="gold" />
         <div className="details-actions">
-          <Link to="/ai-advisor" search={{ university: university.id }} className="panel-action primary"><MessageSquareText size={17} /> Ask AI</Link>
+          <button type="button" onClick={() => openAdvisor(university)} className="panel-action primary"><MessageSquareText size={17} /> Ask AI</button>
           <Link to="/consultants" className="panel-action"><Users size={17} /> Consultant</Link>
           <a className="panel-action map-action" href={university.locationUrl} target="_blank" rel="noreferrer"><MapPinned size={17} /> View on Map</a>
           <a className="panel-action" href={university.website} target="_blank" rel="noreferrer"><Globe2 size={17} /> Official Website</a>

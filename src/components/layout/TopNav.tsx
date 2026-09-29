@@ -1,6 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Bookmark, Home, LogIn, Search, Sparkles, User, UserPlus } from "lucide-react";
 
+import { openAdvisor } from "@/components/ai/AdvisorChat";
+
 const navItems = [
   { label: "Home", to: "/", icon: Home },
   { label: "Bookmarks", to: "/bookmarks", icon: Bookmark },
@@ -36,6 +38,7 @@ export function TopNav({
     <nav className={`top-nav ${mobile ? "top-nav-mobile" : ""} ${activeAction ? "modal-action-active" : ""}`} aria-label="Primary navigation">
       {visibleItems.map((item) => {
         const Icon = item.icon;
+        if (item.to === "/ai-advisor") return <button key={item.label} type="button" className="top-nav-link" onClick={() => openAdvisor()}><Icon size={17} /><span>{item.label}</span></button>;
         const routeActive = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
         const active = activeAction ? item.action === activeAction : routeActive;
         if (item.action === "search" && onSearchClick) {
