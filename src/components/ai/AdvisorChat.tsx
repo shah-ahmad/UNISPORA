@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Functions, ExecutionMethod } from "appwrite";
 import { Send, X, Sparkles } from "lucide-react";
@@ -11,6 +12,17 @@ export function openAdvisor(university?: University) {
 
 type Message = { role: "user" | "assistant"; text: string };
 const functions = new Functions(appwriteClient);
+const draftKey = "unispora-advisor-draft";
+function readDraft(): string | undefined {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(draftKey) || "null");
+    if (saved && typeof saved.text === "string" && saved.expiresAt > Date.now()) return saved.text.slice(0, 2000);
+    sessionStorage.removeItem(draftKey);
+  } catch { /* Storage may be unavailable. */ }
+}
+function saveDraft(text: string) {
+  try { sessionStorage.setItem(draftKey, JSON.stringify({ text, expiresAt: Date.now() + 30 * 60 * 1000 })); } catch { /* Keep the in-memory draft. */ }
+}
 
 export function AdvisorChat() {
   const { user } = useAuth();
@@ -18,6 +30,8 @@ export function AdvisorChat() {
   const [university, setUniversity] = useState<University>();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [authPrompt, setAuthPrompt] = useState(false);
+  const pendingDraft = useRef<string | undefined>(readDraft());
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -39,7 +53,15 @@ export function AdvisorChat() {
   useEffect(() => {
     generation.current += 1;
     setMessages([]);
-    setInput("");
+    if (user?.emailVerification && pendingDraft.current) {
+      setInput(pendingDraft.current);
+      pendingDraft.current = undefined;
+      try { sessionStorage.removeItem(draftKey); } catch { /* Storage may be unavailable. */ }
+      setOpen(true);
+    } else {
+      setInput(pendingDraft.current ?? "");
+    }
+    setAuthPrompt(false);
     setError("");
     setUniversity(undefined);
   }, [user?.$id]);
@@ -49,7 +71,11 @@ export function AdvisorChat() {
   const close = () => { setOpen(false); trigger.current?.focus(); };
   async function send() {
     const text = input.trim();
-    if (!text || sending.current || !user?.emailVerification) return;
+    if (!text || sending.current) return;
+    if (!user?.emailVerification) {
+      setAuthPrompt(true);
+      return;
+    }
     sending.current = true;
     const requestGeneration = generation.current;
     const next: Message[] = [...messages, { role: "user", text }];
@@ -87,10 +113,17 @@ export function AdvisorChat() {
         <div ref={bottomRef} />
       </div>
       {error ? <p className="advisor-error" role="alert">{error}</p> : null}
-      {!user?.emailVerification ? <p className="advisor-note">Log in with a verified account to chat. You can close this panel and use Login above.</p> : null}
+      {authPrompt && !user?.emailVerification ? <div className="advisor-auth-prompt" role="alert">
+        <p>Log in or sign up to send your message.</p>
+        <div>
+          <Link className="panel-action primary" to="/login" onClick={() => { pendingDraft.current = input; saveDraft(input); setOpen(false); }}>Log in</Link>
+          <Link className="panel-action" to="/signup" onClick={() => { pendingDraft.current = input; saveDraft(input); setOpen(false); }}>Sign up</Link>
+        </div>
+        <small>Your draft will be here when you return.</small>
+      </div> : null}
       <form className="advisor-compose" onSubmit={(event) => { event.preventDefault(); void send(); }}>
-        <input ref={inputRef} value={input} onChange={(event) => setInput(event.target.value)} maxLength={2000} placeholder="Ask anything about studying abroad…" aria-label="Message AI Advisor" disabled={busy || !user?.emailVerification} />
-        <button type="submit" aria-label="Send message" disabled={busy || !input.trim() || !user?.emailVerification}><Send size={18} /></button>
+        <input ref={inputRef} value={input} onChange={(event) => setInput(event.target.value)} maxLength={2000} placeholder="Ask anything about studying abroad…" aria-label="Message AI Advisor" disabled={busy} />
+        <button type="submit" aria-label="Send message" disabled={busy || !input.trim()}><Send size={18} /></button>
       </form>
       <p className="advisor-note">Powered by Gemini. Messages are sent to Google. Confirm fees and deadlines with official sources.</p>
     </section>

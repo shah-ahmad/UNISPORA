@@ -3462,3 +3462,8 @@ button.top-nav-link {
 .advisor-note { padding:10px 18px; margin:0; font-size:11px; color:#b9c4cc; line-height:1.5; }
 .advisor-error { padding:0 18px; color:#ffd493; font-size:13px; }
 @media(max-width:600px) { .advisor-chat { right:14px; top:84px; height:min(560px,calc(100dvh - 100px)); } }
+
+.advisor-auth-prompt { margin:0 14px; padding:14px; border:1px solid #e5b65d55; border-radius:14px; background:#e5b65d12; font-size:14px; }
+.advisor-auth-prompt > div { display:flex; gap:10px; margin:12px 0; }
+.advisor-auth-prompt .panel-action { flex:1; justify-content:center; min-height:40px; }
+.advisor-auth-prompt small { color:#b9c4cc; }
