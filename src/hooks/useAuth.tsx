@@ -11,28 +11,19 @@ type UniSporaPreferences = Models.Preferences & {
   country?: string;
 };
 
-type PendingSignup = {
-  email: string;
-  password: string;
-  role: AuthRole;
-  expiresAt: number;
-};
-
 type AuthContextValue = {
   user?: Models.User<UniSporaPreferences>;
   loading: boolean;
   login: (email: string, password: string) => Promise<Models.User<UniSporaPreferences>>;
   signup: (email: string, password: string, role: AuthRole, fullName: string, country: string) => Promise<Models.User<UniSporaPreferences>>;
   sendVerificationEmail: () => Promise<void>;
-  verifyEmail: (token: string) => Promise<Models.User<UniSporaPreferences> | undefined>;
+  verifyEmail: (userId: string, secret: string) => Promise<void>;
   signInWithGoogle: () => void;
   updateUsername: (name: string) => Promise<Models.User<UniSporaPreferences>>;
   logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-const pendingSignupKey = "unispora-pending-signup";
-const pendingSignupTtl = 1000 * 60 * 60 * 24;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<Models.User<UniSporaPreferences>>();
@@ -40,6 +31,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
+    // Remove credentials saved by the previous verification flow.
+    window.sessionStorage.removeItem("unispora-pending-signup");
 
     loadCurrentUser()
       .then(async (currentUser) => {
@@ -76,15 +69,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await account.createEmailPasswordSession(email, password);
       const currentUser = await account.get() as Models.User<UniSporaPreferences>;
       if (!currentUser.emailVerification) {
-        await sendUniSporaVerificationEmail(currentUser.$id, currentUser.email);
-        savePendingSignup({
-          email,
-          password,
-          role: currentUser.prefs?.role ?? "student",
-          expiresAt: Date.now() + pendingSignupTtl,
-        });
-        await account.deleteSession("current");
-        setUser(undefined);
+        try {
+          await sendUniSporaVerificationEmail();
+        } finally {
+          await account.deleteSession("current");
+          setUser(undefined);
+        }
         throw new Error("Please verify your email first. We sent a new verification link.");
       }
 
@@ -101,38 +91,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
       await account.createEmailPasswordSession(email, password);
-      await account.updatePrefs({ prefs: { role, fullName: fullName.trim(), country: country.trim() } });
-      const currentUser = await account.get() as Models.User<UniSporaPreferences>;
-      await sendUniSporaVerificationEmail(currentUser.$id, currentUser.email);
-      savePendingSignup({
-        email,
-        password,
-        role,
-        expiresAt: Date.now() + pendingSignupTtl,
-      });
-      await account.deleteSession("current");
-      setUser(undefined);
-      return currentUser;
+      try {
+        await account.updatePrefs({ prefs: { role, fullName: fullName.trim(), country: country.trim() } });
+        const currentUser = await account.get() as Models.User<UniSporaPreferences>;
+        try {
+          await sendUniSporaVerificationEmail();
+        } catch {
+          throw new Error("Your account was created, but the verification email could not be sent. Try logging in to request a new link.");
+        }
+        return currentUser;
+      } finally {
+        await account.deleteSession("current");
+        setUser(undefined);
+      }
     },
     async sendVerificationEmail() {
-      const currentUser = await account.get() as Models.User<UniSporaPreferences>;
-      await sendUniSporaVerificationEmail(currentUser.$id, currentUser.email);
+      await sendUniSporaVerificationEmail();
     },
-    async verifyEmail(token) {
-      await verifyEmailToken(token);
-      const tokenEmail = readTokenEmail(token);
-      const pendingSignup = getPendingSignup();
-      if (!pendingSignup || pendingSignup.email.toLowerCase() !== tokenEmail?.toLowerCase()) {
-        setUser(undefined);
-        return undefined;
-      }
-
-      await account.deleteSession("current").catch(() => undefined);
-      await account.createEmailPasswordSession(pendingSignup.email, pendingSignup.password);
-      const currentUser = await account.get() as Models.User<UniSporaPreferences>;
-      clearPendingSignup();
-      setUser(currentUser);
-      return currentUser;
+    async verifyEmail(userId, secret) {
+      await verifyEmailToken(userId, secret);
     },
     signInWithGoogle() {
       window.location.href = getOAuthUrl({
@@ -204,49 +181,6 @@ async function finalizeCurrentUser(currentUser: Models.User<UniSporaPreferences>
   } catch {
     return currentUser;
   }
-}
-
-function savePendingSignup(signup: PendingSignup) {
-  window.sessionStorage.setItem(pendingSignupKey, JSON.stringify(signup));
-}
-
-function getPendingSignup() {
-  try {
-    const stored = window.sessionStorage.getItem(pendingSignupKey);
-    if (!stored) return undefined;
-
-    const pendingSignup = JSON.parse(stored) as PendingSignup;
-    if (!pendingSignup.email || !pendingSignup.password || pendingSignup.expiresAt < Date.now()) {
-      clearPendingSignup();
-      return undefined;
-    }
-
-    return pendingSignup;
-  } catch {
-    clearPendingSignup();
-    return undefined;
-  }
-}
-
-function clearPendingSignup() {
-  window.sessionStorage.removeItem(pendingSignupKey);
-}
-
-function readTokenEmail(token: string) {
-  try {
-    const [body] = token.split(".");
-    if (!body) return undefined;
-
-    const payload = JSON.parse(atob(toBase64(body))) as { email?: string };
-    return payload.email;
-  } catch {
-    return undefined;
-  }
-}
-
-function toBase64(value: string) {
-  const padded = value.padEnd(value.length + ((4 - (value.length % 4)) % 4), "=");
-  return padded.replace(/-/g, "+").replace(/_/g, "/");
 }
 
 function getOAuthUrl({

@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,7 +9,6 @@ export const Route = createFileRoute("/verify")({
 
 function VerifyEmail() {
   const { verifyEmail } = useAuth();
-  const navigate = useNavigate();
   const verificationStarted = useRef(false);
   const [status, setStatus] = useState<"checking" | "success" | "error">("checking");
   const [message, setMessage] = useState("Verifying your email...");
@@ -20,31 +18,26 @@ function VerifyEmail() {
     verificationStarted.current = true;
 
     const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+    const userId = params.get("userId");
+    const secret = params.get("secret");
 
-    if (!token) {
+    if (!userId || !secret) {
       setStatus("error");
-      setMessage("This verification link is missing the required details.");
+      setMessage(params.has("token") ? "This is an older verification link. Log in to request a new email." : "This verification link is missing the required details.");
       return;
     }
 
-    verifyEmail(token)
-      .then(async (user) => {
+    verifyEmail(userId, secret)
+      .then(() => {
+        window.history.replaceState(null, "", window.location.pathname);
         setStatus("success");
-        if (user) {
-          setMessage("Your email has been verified. Signing you in...");
-          const destination = user.prefs?.role === "consultant" ? "/dashboard/consultant" : "/dashboard/student";
-          await navigate({ to: destination });
-          return;
-        }
-
         setMessage("Your email has been verified. Please log in to continue.");
       })
       .catch((error) => {
         setStatus("error");
         setMessage(error instanceof Error ? error.message : "We could not verify this email link.");
       });
-  }, [navigate, verifyEmail]);
+  }, [verifyEmail]);
 
   return (
     <AppShell>
@@ -52,8 +45,8 @@ function VerifyEmail() {
         <div className="auth-card verify-card">
           <h1>{status === "success" ? "Email verified." : status === "error" ? "Verification failed." : "Checking email."}</h1>
           <p className="auth-message">{message}</p>
-          <Link className="panel-action primary justify-center" to={status === "success" ? "/login" : "/"}>
-            {status === "success" ? "Continue to login" : "Back to UniSpora"}
+          <Link className="panel-action primary justify-center" to="/login">
+            {status === "success" ? "Continue to login" : "Log in to request a new link"}
           </Link>
         </div>
       </section>

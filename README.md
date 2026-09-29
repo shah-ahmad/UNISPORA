@@ -126,3 +126,9 @@ Each username is stored as the document ID, so Appwrite rejects duplicates. Duri
 ## Repository
 
 GitHub: [shah-ahmad/UNISPORA](https://github.com/shah-ahmad/UNISPORA)
+
+## Email verification
+
+Email verification uses Appwrite Auth and its default Cloud email service. No custom email function, email provider key, or server API key is needed. Register `unispora.com`, `www.unispora.com`, and your development hostname as Web platforms in Appwrite.
+
+Sign-up sends a verification email to the authenticated account, then ends the temporary session. The `/verify` page exchanges Appwrite's `userId` and `secret` query parameters; the user then logs in normally. Unverified login attempts send a fresh link and end the session. Passwords are never saved for automatic login. Older verification links must be replaced by logging in to request a new email.
