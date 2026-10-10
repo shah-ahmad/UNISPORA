@@ -1,6 +1,7 @@
 import { openAdvisor } from "@/components/ai/AdvisorChat";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { readTuitionBreakdown, TuitionDetails } from "./TuitionDetails";
 import type { ReactNode } from "react";
 import {
   Award,
@@ -26,6 +27,19 @@ export function UniversityDetailsPanel({
   onClose?: () => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const [showTuition, setShowTuition] = useState(false);
+  const breakdown = readTuitionBreakdown(university?.tuitionDetails);
+  useEffect(() => { setShowTuition(false); }, [university?.id]);
+  function backToUniversity() {
+    setShowTuition(false);
+    requestAnimationFrame(() => panelRef.current?.querySelector<HTMLButtonElement>('.tuition-details-link')?.focus());
+  }
+  useEffect(() => {
+    if (!showTuition) return;
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { event.preventDefault(); backToUniversity(); } };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [showTuition]);
 
   useEffect(() => {
     if (!onClose) return;
@@ -59,19 +73,20 @@ export function UniversityDetailsPanel({
   }
 
   return (
-    <GlassCard ref={panelRef} className="details-panel">
+    <GlassCard ref={panelRef} className={`details-panel ${showTuition && breakdown ? 'tuition-expanded' : ''}`}>
       {onClose ? (
         <button className="details-close" type="button" onClick={onClose} aria-label="Close university details">
           <X size={18} />
         </button>
       ) : null}
-      <div className="details-scroll">
+      <div className="details-scroll" key={showTuition && breakdown ? 'tuition' : 'overview'}>
+        {showTuition && breakdown ? <TuitionDetails name={university.name} breakdown={breakdown} onBack={backToUniversity} /> : <>
         <p className="text-sm uppercase tracking-[0.24em] text-[#f6b75c]">Selected university</p>
         <h2 className="university-title-3d mt-3 font-serif text-3xl text-[#fff4df]">{university.name}</h2>
         <p className="mt-2 flex items-center gap-2 text-[#d7ccbb]"><MapPin size={17} /> {university.city}, {university.country}</p>
         <p className="mt-4 text-sm leading-6 text-[#ded2bd]">{university.description}</p>
         <Info icon={<GraduationCap size={18} />} label="Programs" value={university.programs.join(", ")} tone="violet" />
-        <TuitionApplicationFeeRows university={university} />
+        <TuitionApplicationFeeRows university={university} onOpenTuition={() => setShowTuition(true)} />
         <Info icon={<Languages size={18} />} label="Languages" value={university.languages.join(", ")} tone="teal" />
         <Info icon={<Languages size={18} />} label="Language requirements" value={<LanguageRequirements university={university} />} tone="teal" />
         <Info icon={<Award size={18} />} label="Scholarships" value={<ScholarshipList university={university} />} tone="gold" />
@@ -81,6 +96,7 @@ export function UniversityDetailsPanel({
           <a className="panel-action map-action" href={university.locationUrl} target="_blank" rel="noreferrer"><MapPinned size={17} /> View on Map</a>
           <a className="panel-action" href={university.website} target="_blank" rel="noreferrer"><Globe2 size={17} /> Official Website</a>
         </div>
+        </>}
       </div>
     </GlassCard>
   );
@@ -126,14 +142,15 @@ type StructuredCosts = {
   applicationFee?: CostSection;
 };
 
-function TuitionApplicationFeeRows({ university }: { university: University }) {
+function TuitionApplicationFeeRows({ university, onOpenTuition }: { university: University; onOpenTuition: () => void }) {
+  const breakdown = readTuitionBreakdown(university.tuitionDetails);
   const structuredCosts = parseStructuredCosts(university.tuitionDetails);
   const tuition = structuredCosts?.tuition ?? getFallbackTuitionSection(university);
   const applicationFee = structuredCosts?.applicationFee ?? getFallbackApplicationFeeSection(university);
 
   return (
     <>
-      <Info icon={<CircleDollarSign size={18} />} label="Tuition" value={<CostColumn section={tuition} />} tone="blue" />
+      <Info icon={<CircleDollarSign size={18} />} label="Tuition" value={breakdown ? <><span>{breakdown.year} · {breakdown.unit}</span><button type="button" className="tuition-details-link" onClick={onOpenTuition}>View fees by category →</button></> : <CostColumn section={tuition} />} tone="blue" />
       <Info icon={<CreditCard size={18} />} label="Application fee" value={<CostColumn section={applicationFee} />} tone="gold" />
     </>
   );

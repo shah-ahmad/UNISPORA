@@ -3469,6 +3469,21 @@ button.top-nav-link {
 .advisor-auth-prompt small { color:#b9c4cc; }
 
 .admin-page { color:#fff4df; padding-bottom:60px; }
+.tuition-details-link,.tuition-back { display:block; border:0; background:none; color:#ffda91; text-decoration:underline; text-underline-offset:4px; text-align:left; cursor:pointer; padding:8px 0; font:inherit; }
+.tuition-back { margin:0 30px 18px 0; }
+.tuition-eyebrow { color:#ffda91; text-transform:uppercase; letter-spacing:.12em; font-size:12px; }
+.details-panel .tuition-title { font-size:28px; margin:8px 0 12px; }
+.tuition-unit { margin:8px 0 20px; font-weight:600; }
+.tuition-table-wrap { margin:20px 0; }
+.tuition-table { border-collapse:collapse; width:100%; font-size:13px; line-height:1.5; }
+.tuition-table caption { text-align:left; color:#ffda91; font-size:18px; font-weight:600; margin-bottom:12px; }
+.tuition-table th,.tuition-table td { padding:10px 7px; border-bottom:1px solid #ffffff25; text-align:left; }
+.tuition-table thead th { background:#08172266; font-size:12px; }
+.tuition-table tbody th { font-weight:400; }
+.tuition-table td { white-space:nowrap; font-variant-numeric:tabular-nums; }
+.tuition-disclaimer { padding:16px; margin-top:24px; border:1px solid #ffda9150; border-radius:12px; background:#e6b75b12; line-height:1.6; }
+.home-details.anchored-details:has(.tuition-expanded) { width:min(640px,calc(100% - 24px)); left:auto; right:12px; top:90px; }
+@media(max-width:600px) { .home-details.anchored-details:has(.tuition-expanded) { width:calc(100% - 20px); right:10px; top:108px; } .tuition-table { font-size:12px; } .tuition-table th,.tuition-table td { padding:9px 4px; } }
 .admin-heading p:last-child { text-transform:none; letter-spacing:normal; }
 .admin-navigation { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:8px; margin:28px 0; }
 .admin-navigation button { display:flex; align-items:center; gap:9px; padding:13px 15px; color:#d7dce0; background:#13222ddd; border:1px solid #ffffff25; border-radius:12px; text-align:left; cursor:pointer; }
