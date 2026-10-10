@@ -3488,6 +3488,11 @@ button.top-nav-link {
 .admin-navigation { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:8px; margin:28px 0; }
 .admin-navigation button { display:flex; align-items:center; gap:9px; padding:13px 15px; color:#d7dce0; background:#13222ddd; border:1px solid #ffffff25; border-radius:12px; text-align:left; cursor:pointer; }
 .admin-navigation button[aria-current=page] { background:#e6b75b; color:#13202b; border-color:#ffe1a5; }
+@media(max-width:640px) {
+  .admin-navigation { grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin:18px 0; }
+  .admin-navigation button { min-width:0; min-height:44px; padding:8px 10px; gap:7px; border-radius:9px; font-size:13px; line-height:1.25; }
+  .admin-navigation button svg { width:16px; height:16px; flex-shrink:0; }
+}
 .admin-section-title { font-size:24px; margin:20px 0 12px; }
 .admin-help { color:#bbc6ce; line-height:1.65; margin:12px 0 20px; font-size:14px; }
 .admin-overview { display:grid; grid-template-columns:repeat(auto-fit,minmax(135px,1fr)); gap:14px; margin:20px 0; }
