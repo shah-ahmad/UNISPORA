@@ -1,0 +1,606 @@
+{
+  "universities": {
+    "label": "Universities",
+    "kind": "university",
+    "fields": [
+      {
+        "key": "name",
+        "type": "string",
+        "required": true,
+        "array": false,
+        "size": 256
+      },
+      {
+        "key": "city",
+        "type": "string",
+        "required": true,
+        "array": false,
+        "size": 128
+      },
+      {
+        "key": "country",
+        "type": "string",
+        "required": true,
+        "array": false,
+        "size": 128
+      },
+      {
+        "key": "continent",
+        "type": "string",
+        "required": false,
+        "array": false,
+        "size": 64
+      },
+      {
+        "key": "latitude",
+        "type": "double",
+        "required": true,
+        "array": false,
+        "min": -90,
+        "max": 90
+      },
+      {
+        "key": "longitude",
+        "type": "double",
+        "required": true,
+        "array": false,
+        "min": -180,
+        "max": 180
+      },
+      {
+        "key": "locationUrl",
+        "type": "string",
+        "required": false,
+        "array": false,
+        "format": "url"
+      },
+      {
+        "key": "website",
+        "type": "string",
+        "required": false,
+        "array": false,
+        "format": "url"
+      },
+      {
+        "key": "description",
+        "type": "string",
+        "required": false,
+        "array": false,
+        "size": 2048
+      },
+      {
+        "key": "programs",
+        "type": "string",
+        "required": false,
+        "array": true,
+        "size": 128
+      },
+      {
+        "key": "tuition",
+        "type": "string",
+        "required": false,
+        "array": false,
+        "size": 512
+      },
+      {
+        "key": "tuitionValue",
+        "type": "integer",
+        "required": false,
+        "array": false,
+        "min": 0,
+        "max": 1000000
+      },
+      {
+        "key": "languages",
+        "type": "string",
+        "required": false,
+        "array": true,
+        "size": 64
+      },
+      {
+        "key": "scholarships",
+        "type": "string",
+        "required": false,
+        "array": true,
+        "size": 256
+      },
+      {
+        "key": "applicationFeeNonMedical",
+        "type": "integer",
+        "required": false,
+        "array": false,
+        "min": 0,
+        "max": 1000000
+      },
+      {
+        "key": "applicationFeeMedical",
+        "type": "integer",
+        "required": false,
+        "array": false,
+        "min": 0,
+        "max": 1000000
+      },
+      {
+        "key": "applicationFeeCurrency",
+        "type": "string",
+        "required": false,
+        "array": false,
+        "size": 16
+      },
+      {
+        "key": "applicationFeeLastUpdated",
+        "type": "datetime",
+        "required": false,
+        "array": false,
+        "format": ""
+      },
+      {
+        "key": "applicationFeeSource",
+        "type": "string",
+        "required": false,
+        "array": false,
+        "size": 1024
+      },
+      {
+        "key": "tuitionDetails",
+        "type": "string",
+        "required": false,
+        "array": false,
+        "size": 4096
+      }
+    ]
+  },
+  "consultants": {
+    "label": "Consultants",
+    "kind": "consultant",
+    "fields": [
+      {
+        "key": "name",
+        "type": "string",
+        "size": 256,
+        "required": true
+      },
+      {
+        "key": "avatar",
+        "type": "string",
+        "size": 128
+      },
+      {
+        "key": "rating",
+        "type": "double",
+        "min": 0,
+        "max": 5
+      },
+      {
+        "key": "badge",
+        "type": "enum",
+        "elements": [
+          "Bronze Mentor",
+          "Silver Mentor",
+          "Gold Mentor",
+          "Verified Expert",
+          "Top Consultant"
+        ]
+      },
+      {
+        "key": "languages",
+        "type": "string",
+        "size": 256,
+        "array": true
+      },
+      {
+        "key": "specialties",
+        "type": "string",
+        "size": 256,
+        "array": true
+      },
+      {
+        "key": "countryExpertise",
+        "type": "string",
+        "size": 256,
+        "array": true
+      },
+      {
+        "key": "price",
+        "type": "string",
+        "size": 256
+      },
+      {
+        "key": "bio",
+        "type": "string",
+        "size": 4096
+      }
+    ]
+  },
+  "scholarships": {
+    "label": "Scholarships",
+    "kind": "scholarship",
+    "fields": [
+      {
+        "key": "slug",
+        "type": "string",
+        "required": true,
+        "array": false,
+        "size": 128
+      },
+      {
+        "key": "title",
+        "type": "string",
+        "required": true,
+        "array": false,
+        "size": 256
+      },
+      {
+        "key": "provider",
+        "type": "string",
+        "required": true,
+        "array": false,
+        "size": 256
+      },
+      {
+        "key": "hostCountries",
+        "type": "string",
+        "required": true,
+        "array": true,
+        "size": 128
+      },
+      {
+        "key": "fundingType",
+        "type": "string",
+        "required": true,
+        "array": false,
+        "size": 256
+      },
+      {
+        "key": "applicationFee",
+        "type": "string",
+        "required": true,
+        "array": false,
+        "size": 128
+      },
+      {
+        "key": "languageNote",
+        "type": "string",
+        "required": true,
+        "array": false,
+        "size": 2000
+      },
+      {
+        "key": "summary",
+        "type": "string",
+        "required": true,
+        "array": false,
+        "size": 2000
+      },
+      {
+        "key": "quickFactsJson",
+        "type": "string",
+        "required": true,
+        "array": false,
+        "size": 4000,
+        "format": "facts"
+      },
+      {
+        "key": "benefits",
+        "type": "string",
+        "required": true,
+        "array": true,
+        "size": 1000
+      },
+      {
+        "key": "eligibility",
+        "type": "string",
+        "required": true,
+        "array": true,
+        "size": 1000
+      },
+      {
+        "key": "studyLevels",
+        "type": "string",
+        "required": true,
+        "array": true,
+        "size": 256
+      },
+      {
+        "key": "fields",
+        "type": "string",
+        "required": true,
+        "array": true,
+        "size": 256
+      },
+      {
+        "key": "documents",
+        "type": "string",
+        "required": true,
+        "array": true,
+        "size": 1000
+      },
+      {
+        "key": "process",
+        "type": "string",
+        "required": true,
+        "array": true,
+        "size": 1000
+      },
+      {
+        "key": "importantNotes",
+        "type": "string",
+        "required": true,
+        "array": true,
+        "size": 1000
+      },
+      {
+        "key": "sendingPartners",
+        "type": "string",
+        "required": true,
+        "array": true,
+        "size": 256
+      },
+      {
+        "key": "officialUrl",
+        "type": "string",
+        "required": true,
+        "array": false,
+        "size": 512,
+        "format": "url"
+      },
+      {
+        "key": "tags",
+        "type": "string",
+        "required": true,
+        "array": true,
+        "size": 256
+      },
+      {
+        "key": "isPublished",
+        "type": "boolean",
+        "required": true,
+        "array": false
+      }
+    ],
+    "published": true
+  },
+  "premium_plans": {
+    "label": "Premium plans",
+    "kind": "plan",
+    "fields": [
+      {
+        "key": "name",
+        "type": "string",
+        "size": 128,
+        "required": true
+      },
+      {
+        "key": "description",
+        "type": "string",
+        "size": 2000,
+        "required": false
+      },
+      {
+        "key": "price",
+        "type": "double",
+        "min": 0,
+        "max": 100000,
+        "required": true
+      },
+      {
+        "key": "currency",
+        "type": "string",
+        "size": 3,
+        "required": true
+      },
+      {
+        "key": "billingInterval",
+        "type": "enum",
+        "elements": [
+          "monthly",
+          "yearly",
+          "one-time"
+        ],
+        "required": true
+      },
+      {
+        "key": "features",
+        "type": "string",
+        "size": 500,
+        "required": false,
+        "array": true
+      },
+      {
+        "key": "status",
+        "type": "enum",
+        "elements": [
+          "draft",
+          "ready",
+          "archived"
+        ],
+        "required": true
+      }
+    ],
+    "note": "Prepare prices and benefits for a future launch. Checkout and automatic billing are disabled."
+  },
+  "site_content": {
+    "label": "Website content",
+    "kind": "section",
+    "fields": [
+      {
+        "key": "name",
+        "type": "string",
+        "size": 128,
+        "required": true
+      },
+      {
+        "key": "placement",
+        "type": "enum",
+        "elements": [
+          "hero",
+          "section",
+          "footer"
+        ],
+        "required": true
+      },
+      {
+        "key": "title",
+        "type": "string",
+        "size": 256,
+        "required": true
+      },
+      {
+        "key": "body",
+        "type": "string",
+        "size": 6000,
+        "required": false
+      },
+      {
+        "key": "buttonLabel",
+        "type": "string",
+        "size": 128,
+        "required": false
+      },
+      {
+        "key": "buttonUrl",
+        "type": "string",
+        "size": 512,
+        "required": false,
+        "format": "url"
+      },
+      {
+        "key": "sortOrder",
+        "type": "integer",
+        "min": 0,
+        "max": 10000
+      },
+      {
+        "key": "isPublished",
+        "type": "boolean",
+        "required": true
+      }
+    ],
+    "published": true,
+    "note": "The main-hero record controls the existing website heading and introduction. Published sections and footer content appear below it. Keep future sections as drafts."
+  },
+  "announcements": {
+    "label": "Announcements",
+    "kind": "announcement",
+    "fields": [
+      {
+        "key": "name",
+        "type": "string",
+        "size": 128,
+        "required": true
+      },
+      {
+        "key": "title",
+        "type": "string",
+        "size": 256,
+        "required": true
+      },
+      {
+        "key": "body",
+        "type": "string",
+        "size": 2000,
+        "required": true
+      },
+      {
+        "key": "buttonLabel",
+        "type": "string",
+        "size": 128,
+        "required": false
+      },
+      {
+        "key": "buttonUrl",
+        "type": "string",
+        "size": 512,
+        "required": false,
+        "format": "url"
+      },
+      {
+        "key": "isPublished",
+        "type": "boolean",
+        "required": true
+      }
+    ],
+    "published": true,
+    "note": "Publish notices in the website sidebar. Drafts stay private."
+  },
+  "admin_subscriptions": {
+    "label": "Premium access",
+    "kind": "access record",
+    "fields": [
+      {
+        "key": "userId",
+        "type": "string",
+        "size": 36,
+        "required": true
+      },
+      {
+        "key": "planId",
+        "type": "string",
+        "size": 36,
+        "required": true
+      },
+      {
+        "key": "status",
+        "type": "enum",
+        "elements": [
+          "active",
+          "revoked"
+        ],
+        "required": true
+      },
+      {
+        "key": "expiresAt",
+        "type": "datetime",
+        "required": true
+      },
+      {
+        "key": "note",
+        "type": "string",
+        "size": 1000,
+        "required": false
+      }
+    ],
+    "private": true
+  },
+  "admin_activity": {
+    "label": "Activity log",
+    "kind": "event",
+    "fields": [
+      {
+        "key": "actorId",
+        "type": "string",
+        "size": 36,
+        "required": true
+      },
+      {
+        "key": "action",
+        "type": "string",
+        "size": 128,
+        "required": true
+      },
+      {
+        "key": "target",
+        "type": "string",
+        "size": 256,
+        "required": true
+      },
+      {
+        "key": "result",
+        "type": "enum",
+        "elements": [
+          "pending",
+          "completed",
+          "failed"
+        ],
+        "required": true
+      },
+      {
+        "key": "detail",
+        "type": "string",
+        "size": 1000,
+        "required": false
+      }
+    ],
+    "private": true
+  }
+}

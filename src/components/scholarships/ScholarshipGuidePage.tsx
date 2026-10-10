@@ -15,30 +15,32 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { fetchAppwriteScholarshipBySlug } from "@/data/appwriteScholarships";
-import { getScholarshipBySlug } from "@/data/scholarships";
 import type { Scholarship } from "@/data/scholarships";
 
 export function ScholarshipGuidePage({ slug }: { slug: string }) {
-  const fallbackScholarship = getScholarshipBySlug(slug);
-  const [scholarship, setScholarship] = useState<Scholarship | undefined>(fallbackScholarship);
+  const [scholarship, setScholarship] = useState<Scholarship | undefined>();
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [countrySearch, setCountrySearch] = useState("");
 
   useEffect(() => {
     let isMounted = true;
+    setLoading(true); setLoadError(false); setScholarship(undefined);
 
     fetchAppwriteScholarshipBySlug(slug)
       .then((appwriteScholarship) => {
-        if (isMounted && appwriteScholarship) setScholarship(appwriteScholarship);
+        if (isMounted) setScholarship(appwriteScholarship);
       })
       .catch((error) => {
-        console.warn("Could not load scholarship from Appwrite.", error);
-      });
+        if (isMounted) setLoadError(true);
+      }).finally(() => { if (isMounted) setLoading(false); });
 
     return () => {
       isMounted = false;
     };
   }, [slug]);
 
+  if (loading) return <AppShell><section className="scholarship-page"><p>Loading scholarship…</p></section></AppShell>;
   if (!scholarship) {
     return (
       <AppShell>
@@ -48,8 +50,8 @@ export function ScholarshipGuidePage({ slug }: { slug: string }) {
               <ArrowLeft size={18} /> Back to globe
             </Link>
             <p className="text-sm uppercase tracking-[0.24em] text-[#f6b75c]">Scholarship guide</p>
-            <h1>Scholarship not found.</h1>
-            <p>This guide is not available yet.</p>
+            <h1>{loadError ? "Could not load this guide." : "Scholarship not found."}</h1>
+            <p>{loadError ? "Please refresh to try again." : "This guide is not available yet."}</p>
           </div>
         </section>
       </AppShell>
@@ -178,47 +180,9 @@ export function ScholarshipGuidePage({ slug }: { slug: string }) {
   );
 }
 
-function getHeroTitle(scholarship: Scholarship) {
-  return scholarship.slug === "stipendium-hungaricum"
-    ? "Stipendium Hungaricum"
-    : scholarship.title.replace(/\s+Scholarship$/i, "");
-}
-
-function getHeroBullets(scholarship: Scholarship) {
-  if (scholarship.slug === "stipendium-hungaricum") {
-    return [
-      "Hungarian Government scholarship for international students.",
-      "Covers tuition, monthly stipend, accommodation support, and medical insurance.",
-      "Available for eligible countries through the official application system.",
-    ];
-  }
-
-  return scholarship.summary
-    .split(/(?<=\.)\s+/)
-    .map((sentence) => sentence.trim())
-    .filter(Boolean)
-    .slice(0, 3);
-}
-
-function getCoverageItems(scholarship: Scholarship) {
-  if (scholarship.slug === "stipendium-hungaricum") {
-    return [
-      { label: "Tuition", value: "Full tuition", detail: "Awarded program tuition is covered." },
-      { label: "Accommodation", value: "40,000 HUF", detail: "Monthly housing contribution if dormitory is not available." },
-      { label: "Stipend", value: "43,700 HUF", detail: "Monthly stipend for bachelor, master, one-tier, and non-degree studies." },
-      { label: "Insurance", value: "Included", detail: "Hungarian health care services plus supplementary medical insurance." },
-    ];
-  }
-
-  return scholarship.benefits.map((benefit) => {
-    const [value, ...rest] = benefit.split(".");
-    return {
-      label: "Benefit",
-      value: value.trim(),
-      detail: rest.join(".").trim(),
-    };
-  });
-}
+function getHeroTitle(scholarship: Scholarship) { return scholarship.title; }
+function getHeroBullets(scholarship: Scholarship) { return scholarship.summary.split(/(?<=\.)\s+/).map(sentence => sentence.trim()).filter(Boolean); }
+function getCoverageItems(scholarship: Scholarship) { return scholarship.benefits.map(benefit => ({ label: "Benefit", value: benefit, detail: "" })); }
 
 function CoverageGrid({ items }: { items: { label: string; value: string; detail?: string }[] }) {
   return (

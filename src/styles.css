@@ -3469,6 +3469,29 @@ button.top-nav-link {
 .advisor-auth-prompt small { color:#b9c4cc; }
 
 .admin-page { color:#fff4df; padding-bottom:60px; }
+.admin-heading p:last-child { text-transform:none; letter-spacing:normal; }
+.admin-navigation { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:8px; margin:28px 0; }
+.admin-navigation button { display:flex; align-items:center; gap:9px; padding:13px 15px; color:#d7dce0; background:#13222ddd; border:1px solid #ffffff25; border-radius:12px; text-align:left; cursor:pointer; }
+.admin-navigation button[aria-current=page] { background:#e6b75b; color:#13202b; border-color:#ffe1a5; }
+.admin-section-title { font-size:24px; margin:20px 0 12px; }
+.admin-help { color:#bbc6ce; line-height:1.65; margin:12px 0 20px; font-size:14px; }
+.admin-overview { display:grid; grid-template-columns:repeat(auto-fit,minmax(135px,1fr)); gap:14px; margin:20px 0; }
+.admin-overview button { display:grid; gap:9px; padding:24px 18px; border:1px solid #e6b75b40; border-radius:16px; text-align:left; color:#fff4df; background:#152632; cursor:pointer; }
+.admin-overview strong { font:36px Georgia,serif; color:#edc67d; }
+.admin-overview span { font-size:14px; }
+.admin-table-wrap { overflow-x:auto; border:1px solid #ffffff25; border-radius:14px; margin:20px 0; }
+.admin-table { width:100%; border-collapse:collapse; background:#13222ded; font-size:14px; }
+.admin-table th,.admin-table td { padding:14px; text-align:left; border-bottom:1px solid #ffffff15; overflow-wrap:anywhere; }
+.admin-table th { color:#edc67d; }
+.admin-table small { display:block; color:#bbc6ce; margin-top:5px; }
+.admin-page .panel-action { width:auto; }
+.admin-list .panel-action { width:100%; }
+.admin-search { display:flex; gap:12px; flex-wrap:wrap; }
+.admin-search input { flex:1; min-width:180px; }
+.website-content-card { padding:18px; margin:16px 0; border:1px solid #e6b75b35; border-radius:16px; background:#13222da8; }
+.website-content-card h2 { font-size:20px; color:#edc67d; }
+.website-content-card p { white-space:pre-wrap; font-size:14px; line-height:1.6; margin:12px 0; }
+.website-content-card a { color:#edc67d; text-decoration:underline; }
 .admin-page h1 { font:clamp(28px,4vw,44px) Georgia,serif; }
 .admin-tabs,.admin-actions { display:flex; gap:12px; flex-wrap:wrap; margin:20px 0; }
 .admin-layout { display:grid; grid-template-columns:280px minmax(0,1fr); gap:24px; align-items:start; }

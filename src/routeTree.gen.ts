@@ -16,9 +16,11 @@ import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as AiAdvisorRouteImport } from './routes/ai-advisor'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ScholarshipsIndexRouteImport } from './routes/scholarships.index'
 import { Route as ConsultantsIndexRouteImport } from './routes/consultants.index'
 import { Route as ScholarshipsStipendiumHungaricumRouteImport } from './routes/scholarships.stipendium-hungaricum'
 import { Route as ScholarshipsHungarianDiasporaScholarshipRouteImport } from './routes/scholarships.hungarian-diaspora-scholarship'
+import { Route as ScholarshipsSlugRouteImport } from './routes/scholarships.$slug'
 import { Route as DashboardStudentRouteImport } from './routes/dashboard.student'
 import { Route as DashboardConsultantRouteImport } from './routes/dashboard.consultant'
 import { Route as ConsultantsConsultantIdRouteImport } from './routes/consultants.$consultantId'
@@ -58,6 +60,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScholarshipsIndexRoute = ScholarshipsIndexRouteImport.update({
+  id: '/scholarships/',
+  path: '/scholarships/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConsultantsIndexRoute = ConsultantsIndexRouteImport.update({
   id: '/consultants/',
   path: '/consultants/',
@@ -75,6 +82,11 @@ const ScholarshipsHungarianDiasporaScholarshipRoute =
     path: '/scholarships/hungarian-diaspora-scholarship',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ScholarshipsSlugRoute = ScholarshipsSlugRouteImport.update({
+  id: '/scholarships/$slug',
+  path: '/scholarships/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardStudentRoute = DashboardStudentRouteImport.update({
   id: '/dashboard/student',
   path: '/dashboard/student',
@@ -102,9 +114,11 @@ export interface FileRoutesByFullPath {
   '/consultants/$consultantId': typeof ConsultantsConsultantIdRoute
   '/dashboard/consultant': typeof DashboardConsultantRoute
   '/dashboard/student': typeof DashboardStudentRoute
+  '/scholarships/$slug': typeof ScholarshipsSlugRoute
   '/scholarships/hungarian-diaspora-scholarship': typeof ScholarshipsHungarianDiasporaScholarshipRoute
   '/scholarships/stipendium-hungaricum': typeof ScholarshipsStipendiumHungaricumRoute
   '/consultants/': typeof ConsultantsIndexRoute
+  '/scholarships/': typeof ScholarshipsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -117,9 +131,11 @@ export interface FileRoutesByTo {
   '/consultants/$consultantId': typeof ConsultantsConsultantIdRoute
   '/dashboard/consultant': typeof DashboardConsultantRoute
   '/dashboard/student': typeof DashboardStudentRoute
+  '/scholarships/$slug': typeof ScholarshipsSlugRoute
   '/scholarships/hungarian-diaspora-scholarship': typeof ScholarshipsHungarianDiasporaScholarshipRoute
   '/scholarships/stipendium-hungaricum': typeof ScholarshipsStipendiumHungaricumRoute
   '/consultants': typeof ConsultantsIndexRoute
+  '/scholarships': typeof ScholarshipsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -133,9 +149,11 @@ export interface FileRoutesById {
   '/consultants/$consultantId': typeof ConsultantsConsultantIdRoute
   '/dashboard/consultant': typeof DashboardConsultantRoute
   '/dashboard/student': typeof DashboardStudentRoute
+  '/scholarships/$slug': typeof ScholarshipsSlugRoute
   '/scholarships/hungarian-diaspora-scholarship': typeof ScholarshipsHungarianDiasporaScholarshipRoute
   '/scholarships/stipendium-hungaricum': typeof ScholarshipsStipendiumHungaricumRoute
   '/consultants/': typeof ConsultantsIndexRoute
+  '/scholarships/': typeof ScholarshipsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -150,9 +168,11 @@ export interface FileRouteTypes {
     | '/consultants/$consultantId'
     | '/dashboard/consultant'
     | '/dashboard/student'
+    | '/scholarships/$slug'
     | '/scholarships/hungarian-diaspora-scholarship'
     | '/scholarships/stipendium-hungaricum'
     | '/consultants/'
+    | '/scholarships/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -165,9 +185,11 @@ export interface FileRouteTypes {
     | '/consultants/$consultantId'
     | '/dashboard/consultant'
     | '/dashboard/student'
+    | '/scholarships/$slug'
     | '/scholarships/hungarian-diaspora-scholarship'
     | '/scholarships/stipendium-hungaricum'
     | '/consultants'
+    | '/scholarships'
   id:
     | '__root__'
     | '/'
@@ -180,9 +202,11 @@ export interface FileRouteTypes {
     | '/consultants/$consultantId'
     | '/dashboard/consultant'
     | '/dashboard/student'
+    | '/scholarships/$slug'
     | '/scholarships/hungarian-diaspora-scholarship'
     | '/scholarships/stipendium-hungaricum'
     | '/consultants/'
+    | '/scholarships/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -196,9 +220,11 @@ export interface RootRouteChildren {
   ConsultantsConsultantIdRoute: typeof ConsultantsConsultantIdRoute
   DashboardConsultantRoute: typeof DashboardConsultantRoute
   DashboardStudentRoute: typeof DashboardStudentRoute
+  ScholarshipsSlugRoute: typeof ScholarshipsSlugRoute
   ScholarshipsHungarianDiasporaScholarshipRoute: typeof ScholarshipsHungarianDiasporaScholarshipRoute
   ScholarshipsStipendiumHungaricumRoute: typeof ScholarshipsStipendiumHungaricumRoute
   ConsultantsIndexRoute: typeof ConsultantsIndexRoute
+  ScholarshipsIndexRoute: typeof ScholarshipsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -252,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/scholarships/': {
+      id: '/scholarships/'
+      path: '/scholarships'
+      fullPath: '/scholarships/'
+      preLoaderRoute: typeof ScholarshipsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/consultants/': {
       id: '/consultants/'
       path: '/consultants'
@@ -271,6 +304,13 @@ declare module '@tanstack/react-router' {
       path: '/scholarships/hungarian-diaspora-scholarship'
       fullPath: '/scholarships/hungarian-diaspora-scholarship'
       preLoaderRoute: typeof ScholarshipsHungarianDiasporaScholarshipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scholarships/$slug': {
+      id: '/scholarships/$slug'
+      path: '/scholarships/$slug'
+      fullPath: '/scholarships/$slug'
+      preLoaderRoute: typeof ScholarshipsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/student': {
@@ -308,10 +348,12 @@ const rootRouteChildren: RootRouteChildren = {
   ConsultantsConsultantIdRoute: ConsultantsConsultantIdRoute,
   DashboardConsultantRoute: DashboardConsultantRoute,
   DashboardStudentRoute: DashboardStudentRoute,
+  ScholarshipsSlugRoute: ScholarshipsSlugRoute,
   ScholarshipsHungarianDiasporaScholarshipRoute:
     ScholarshipsHungarianDiasporaScholarshipRoute,
   ScholarshipsStipendiumHungaricumRoute: ScholarshipsStipendiumHungaricumRoute,
   ConsultantsIndexRoute: ConsultantsIndexRoute,
+  ScholarshipsIndexRoute: ScholarshipsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
