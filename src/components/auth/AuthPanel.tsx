@@ -1,4 +1,4 @@
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { LogOut } from "lucide-react";
@@ -20,8 +20,9 @@ export function Auth({
   oauthStatus?: string;
 }) {
   const navigate = useNavigate();
-  const { user, login, signup: createAccount, signInWithGoogle } = useAuth();
+  const { user, login, logout, signup: createAccount, signInWithGoogle } = useAuth();
   const userLabel = user?.name || user?.email?.split("@")[0] || "UniSpora user";
+  const [adminMode, setAdminMode] = useState(false);
   const [role, setRole] = useState<AuthRole>("student");
   const [fullName, setFullName] = useState("");
   const [country, setCountry] = useState("");
@@ -63,7 +64,11 @@ export function Auth({
       }
 
       const user = await login(email.trim(), password);
-      const destination = user.prefs?.role === "consultant" ? "/dashboard/consultant" : "/dashboard/student";
+      if (adminMode && !user.labels.includes("admin")) {
+        await logout();
+        throw new Error("This account does not have admin access.");
+      }
+      const destination = user.labels.includes("admin") ? "/admin" : user.prefs?.role === "consultant" ? "/dashboard/consultant" : "/dashboard/student";
       onSuccess?.();
       await navigate({ to: destination });
     } catch (error) {
@@ -79,7 +84,8 @@ export function Auth({
         <AccountCard name={userLabel} email={user.email} />
       ) : (
         <form className="auth-card" onSubmit={submit}>
-          <h1>{title}</h1>
+          <h1>{adminMode && !signup ? "Admin sign in" : title}</h1>
+          {!signup ? <div className="role-choice"><button type="button" className={!adminMode ? "active" : ""} onClick={() => setAdminMode(false)}>Member sign in</button><button type="button" className={adminMode ? "active" : ""} onClick={() => setAdminMode(true)}>Admin sign in</button></div> : null}
           {signup ? (
             <div className="role-choice">
               <button className={role === "student" ? "active" : ""} type="button" onClick={() => setRole("student")}>I am a student</button>
@@ -121,7 +127,7 @@ export function Auth({
 }
 
 export function AccountCard({ name, email, onSignedOut }: { name: string; email: string; onSignedOut?: () => void }) {
-  const { updateUsername, logout } = useAuth();
+  const { user, updateUsername, logout } = useAuth();
   const [username, setUsername] = useState(name);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -154,6 +160,7 @@ export function AccountCard({ name, email, onSignedOut }: { name: string; email:
     <div className="auth-card account-card">
       <h1>{name}</h1>
       <p className="account-email">{email}</p>
+      {user?.labels.includes("admin") ? <Link to="/admin" className="panel-action primary">Open admin dashboard</Link> : null}
       <label className="account-field">
         <span>Username</span>
         <input className="lux-input" value={username} onChange={(event) => setUsername(event.target.value)} />

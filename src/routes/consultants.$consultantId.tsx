@@ -2,7 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Calendar, CheckCircle2 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { consultants } from "@/data/consultants";
+import { useConsultants } from "@/hooks/useConsultants";
 
 export const Route = createFileRoute("/consultants/$consultantId")({
   component: ConsultantProfile,
@@ -10,7 +10,9 @@ export const Route = createFileRoute("/consultants/$consultantId")({
 
 function ConsultantProfile() {
   const { consultantId } = Route.useParams();
+  const { consultants, loading, error } = useConsultants();
   const consultant = consultants.find((item) => item.id === consultantId);
+  if (loading || error) return <AppShell><div className="page-container"><p role={error ? "alert" : "status"}>{error || "Loading consultant…"}</p></div></AppShell>;
   if (!consultant) throw notFound();
   return (
     <AppShell>

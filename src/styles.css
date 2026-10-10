@@ -3467,3 +3467,26 @@ button.top-nav-link {
 .advisor-auth-prompt > div { display:flex; gap:10px; margin:12px 0; }
 .advisor-auth-prompt .panel-action { flex:1; justify-content:center; min-height:40px; }
 .advisor-auth-prompt small { color:#b9c4cc; }
+
+.admin-page { color:#fff4df; padding-bottom:60px; }
+.admin-page h1 { font:clamp(28px,4vw,44px) Georgia,serif; }
+.admin-tabs,.admin-actions { display:flex; gap:12px; flex-wrap:wrap; margin:20px 0; }
+.admin-layout { display:grid; grid-template-columns:280px minmax(0,1fr); gap:24px; align-items:start; }
+.admin-list,.admin-editor { border:1px solid #ffffff25; background:#13222ded; padding:22px; border-radius:18px; }
+.admin-list { display:grid; gap:12px; }
+.admin-list .lux-input { width:100%; min-width:0; }
+.admin-records { max-height:65vh; overflow-y:auto; display:grid; gap:8px; }
+.admin-records button { display:grid; gap:4px; padding:12px; text-align:left; border:1px solid transparent; border-radius:8px; background:#ffffff08; color:inherit; cursor:pointer; }
+.admin-records button[aria-pressed=true] { border-color:#e5b65d; background:#e5b65d20; }
+.admin-records small { color:#c2cbd0; }
+.admin-editor h2 { font-size:24px; margin-bottom:18px; }
+.admin-editor fieldset { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; min-width:0; border:0; padding:0; }
+.admin-editor label { display:grid; gap:7px; font-size:14px; min-width:0; }
+.admin-editor input,.admin-editor textarea,.admin-editor select { border:1px solid #ffffff35; background:#0c1822; color:#fff4df; border-radius:8px; padding:10px; width:100%; min-width:0; }
+.admin-editor textarea { resize:vertical; }
+.admin-editor label:has(textarea) { grid-column:1/-1; }
+.admin-editor small { color:#bbc6ce; }
+.admin-error { color:#ffb9ae; padding:12px; border:1px solid #ee887755; border-radius:8px; }
+.admin-message { color:#b6e5c4; padding:12px; }
+.admin-delete { color:#ffb9ae; }
+@media(max-width:800px) { .admin-layout { grid-template-columns:1fr; } .admin-records { max-height:260px; } .admin-editor fieldset { grid-template-columns:1fr; } }

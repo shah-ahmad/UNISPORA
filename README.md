@@ -136,3 +136,9 @@ Sign-up sends a verification email to the authenticated account, then ends the t
 ## AI Advisor
 
 AI Advisor opens a floating chat without navigating or changing the globe. Messages are sent to an Appwrite Function (`unispora-ai-advisor`) using a server-only `GEMINI_API_KEY` secret. The function requires verified users, validates their Appwrite JWT, limits message/history/output sizes, and uses Gemini 3.1 Flash-Lite Preview. A five-request-per-minute per-user throttle is local to each function instance; it is not a global spending cap. Configure provider quotas for a hard usage ceiling. Conversation history stays in memory and clears on account changes. Execution logging is disabled.
+
+## Admin directory
+
+Sign in using the Admin sign in option, or open `/admin` after logging in. Admins can search, add, edit, and delete universities and consultants. Fields match the Appwrite schema; lists use one item per line. Saved changes are read from Appwrite by the public pages on their next load.
+
+Access is enforced by the server-managed `admin` user label, never by an email check or editable user preferences. The `universities` and `consultants` collections allow public reads, with create/update/delete restricted to `label:admin`, and document security disabled. Assign administrator labels only through trusted Appwrite administration. No credentials belong in source code. Existing consultant profiles were migrated to the `consultants` collection.
