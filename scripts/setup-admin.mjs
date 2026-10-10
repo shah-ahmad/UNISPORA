@@ -55,4 +55,3 @@ catch (e) {
   const body = source.match(/<p>(UniSpora helps[^<]+)<\/p>/)?.[1];
   if (body) await api(heroPath, 'POST', { documentId:'main-hero', permissions:['read("any")'], data:{name:'Main website introduction',placement:'hero',title:'Where Ambitions Go Global',body,isPublished:true,sortOrder:0} });
 }
-
