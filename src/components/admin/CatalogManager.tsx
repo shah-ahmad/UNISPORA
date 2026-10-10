@@ -57,6 +57,18 @@ export function CatalogManager({ collection, onDirty }: { collection: string; on
     } catch (err) { setError(err instanceof Error ? err.message : "Could not delete record."); }
     finally { setBusy(false); }
   }
+  const matchingRecords = records.filter(row => `${row.name ?? row.title} ${row.country ?? ""}`.toLowerCase().includes(search.trim().toLowerCase())).sort((a, b) => String(a.name ?? a.title).localeCompare(String(b.name ?? b.title)));
+  const countryGroups = new Map<string, { label: string; rows: CatalogDocument[] }>();
+  if (collection === "universities") {
+    for (const row of matchingRecords) {
+      const label = String(row.country ?? "").trim() || "Country not set";
+      const key = label.toLowerCase();
+      const group = countryGroups.get(key) ?? { label, rows: [] };
+      group.rows.push(row);
+      countryGroups.set(key, group);
+    }
+  }
+  const recordButton = (row: CatalogDocument) => <button type="button" disabled={busy} key={row.$id} aria-pressed={selected === row.$id} onClick={() => choose(row)}><strong>{String(row.name ?? row.title)}</strong><small>{String(row.isPublished === undefined ? row.country ?? row.badge ?? row.status ?? "" : row.isPublished ? "Published" : "Draft")}</small></button>;
   return <>
     <h2 className="admin-section-title">{catalogs[collection].label}</h2>
     {note ? <p className="admin-help">{note}</p> : null}
@@ -67,7 +79,13 @@ export function CatalogManager({ collection, onDirty }: { collection: string; on
       <button type="button" className="panel-action primary" disabled={busy || loading} onClick={() => choose()}>Add {kind}</button>
       <button type="button" className="panel-action" disabled={busy || loading} onClick={() => { if (canLeave()) { setSelected(undefined); setDirty(false); setVersion(v => v + 1); } }}>Refresh records</button>
       {loading ? <p>Loading…</p> : <p>{records.length} records</p>}
-      <div className="admin-records">{records.filter(row => `${row.name ?? row.title} ${row.country ?? ""}`.toLowerCase().includes(search.toLowerCase())).sort((a, b) => String(a.name ?? a.title).localeCompare(String(b.name ?? b.title))).map(row => <button type="button" disabled={busy} key={row.$id} aria-pressed={selected === row.$id} onClick={() => choose(row)}><strong>{String(row.name ?? row.title)}</strong><small>{String(row.isPublished === undefined ? row.country ?? row.badge ?? row.status ?? "" : row.isPublished ? "Published" : "Draft")}</small></button>)}</div>
+      <div className="admin-records">
+        {!loading && matchingRecords.length === 0 ? <p>No matching records.</p> : null}
+        {collection === "universities" ? [...countryGroups.entries()].sort(([, a], [, b]) => a.label.localeCompare(b.label)).map(([key, group]) => <details className="admin-country-group" key={key} open>
+          <summary>{group.label} <span>({group.rows.length})</span></summary>
+          <div className="admin-country-records">{group.rows.map(recordButton)}</div>
+        </details>) : matchingRecords.map(recordButton)}
+      </div>
     </aside>
     {selected ? <form className="admin-editor" onSubmit={save}><h2>{selected === "new" ? `Add ${kind}` : `Edit ${kind}`}</h2>{collection === "scholarships" && selected !== "new" && values.isPublished === "true" ? <p className="admin-help"><a href={`/scholarships/${encodeURIComponent(values.slug)}`} target="_blank" rel="noreferrer">Open published guide</a></p> : null}<fieldset disabled={busy}>
       {fields.map(field => <label key={field.key}><span>{(field.format === "facts" ? "Quick facts" : field.type === "boolean" ? "Publication status" : field.key).replace(/([A-Z])/g, " $1").replace(/^./, s => s.toUpperCase())}{field.required ? " *" : ""}</span>
