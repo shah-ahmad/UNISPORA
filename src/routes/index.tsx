@@ -124,7 +124,7 @@ function Index() {
     setFocusTarget({
       longitude: university.longitude,
       latitude: university.latitude,
-      zoom: 4.8,
+      zoom: 10,
       requestId: Date.now(),
     });
   }

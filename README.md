@@ -109,6 +109,9 @@ Create a production build.
 
 ## Notes
 
+- The university directory uses cursor pagination with no fixed record cap. Open map/bookmark views listen for Appwrite document changes and refresh on focus, visibility, and every 30 seconds while visible as a reconnect fallback. Empty results clear old pins; failed requests retain the last successful data. Search zooms beyond the cluster threshold and the selected university has a separate highlighted marker. Country/continent filters still apply to the map.
+- Run `node --test scripts/university-paging.test.mjs` (Node 24+) for pagination and coordinate validation checks.
+
 - The Mapbox token must be provided through `VITE_MAPBOX_TOKEN`.
 - The `usernames` Appwrite collection is used to reserve unique usernames before account creation.
 - Build output, local env files, generated Vite artifacts, and dependencies are ignored through `.gitignore`.

@@ -37,12 +37,14 @@ export function GlobeMap({
   const onSelectRef = useRef(onSelectUniversity);
   const selectedIdRef = useRef(selectedUniversityId);
   const onPointRef = useRef(onSelectedPointChange);
+  const focusRef = useRef(focusTarget);
   const [mounted, setMounted] = useState(false);
 
   universitiesRef.current = universities;
   onSelectRef.current = onSelectUniversity;
   selectedIdRef.current = selectedUniversityId;
   onPointRef.current = onSelectedPointChange;
+  focusRef.current = focusTarget;
 
   useEffect(() => setMounted(true), []);
 
@@ -52,6 +54,7 @@ export function GlobeMap({
     let map: any;
     let cancelled = false;
     let selectedPointFrame: number | undefined;
+    let introTimer: ReturnType<typeof setTimeout> | undefined;
 
     (async () => {
       const mapboxgl = (await import("mapbox-gl")).default;
@@ -92,7 +95,8 @@ export function GlobeMap({
           "star-intensity": globeStyle === "satellite" ? 0.55 : 1,
         });
 
-        setTimeout(() => {
+        introTimer = setTimeout(() => {
+          if (cancelled || focusRef.current) return;
           map.easeTo({
             center: [19.5, 47.1],
             zoom: 2.2,
@@ -191,6 +195,14 @@ export function GlobeMap({
           },
         });
 
+        // Keep the selected university visible even when nearby points are clustered.
+        map.addSource('selected-university', { type: 'geojson', data: toGeoJson(universitiesRef.current.filter(item => item.id === selectedIdRef.current)) });
+        map.addLayer({ id: 'selected-university-point', type: 'circle', source: 'selected-university', paint: {
+          'circle-radius': 10, 'circle-color': '#f6a623', 'circle-stroke-width': 3,
+          'circle-stroke-color': '#ffffff', 'circle-emissive-strength': 1,
+        } });
+        if (focusRef.current) focusMap(map, focusRef.current);
+
         map.on("click", "university-clusters", (e: any) => {
           const features = map.queryRenderedFeatures(e.point, { layers: ["university-clusters"] });
           const clusterId = features[0].properties.cluster_id;
@@ -219,11 +231,13 @@ export function GlobeMap({
 
     return () => {
       cancelled = true;
+      if (introTimer) clearTimeout(introTimer);
       if (selectedPointFrame !== undefined) {
         cancelAnimationFrame(selectedPointFrame);
       }
       onPointRef.current?.(undefined);
       if (map) map.remove();
+      if (mapRef.current === map) mapRef.current = null;
     };
 
     function updateSelectedPoint() {
@@ -252,23 +266,17 @@ export function GlobeMap({
     const source = mapRef.current?.getSource("universities");
     if (!source) return;
     source.setData(toGeoJson(universities));
+    mapRef.current?.getSource('selected-university')?.setData(toGeoJson(universities.filter(item => item.id === selectedIdRef.current)));
   }, [universities]);
 
   useEffect(() => {
     if (!focusTarget || !mapRef.current) return;
 
-    mapRef.current.easeTo({
-      center: [focusTarget.longitude, focusTarget.latitude],
-      zoom: focusTarget.zoom,
-      bearing: 28,
-      pitch: 12,
-      padding: { top: 70, bottom: 170, left: 80, right: 160 },
-      duration: 1900,
-      easing: (t: number) => 1 - Math.pow(1 - t, 3),
-    });
+    if (mapRef.current.getSource('universities')) focusMap(mapRef.current, focusTarget);
   }, [focusTarget?.requestId]);
 
   useEffect(() => {
+    mapRef.current?.getSource('selected-university')?.setData(toGeoJson(universitiesRef.current.filter(item => item.id === selectedUniversityId)));
     if (!selectedUniversityId) {
       onPointRef.current?.(undefined);
       return;
@@ -282,9 +290,15 @@ export function GlobeMap({
     }
     const point = mapRef.current.project([university.longitude, university.latitude]);
     onPointRef.current?.({ x: point.x, y: point.y });
-  }, [selectedUniversityId]);
+  }, [selectedUniversityId, universities]);
 
   return <div ref={containerRef} className="absolute inset-0 h-full w-full" />;
+}
+
+function focusMap(map: any, target: GlobeFocusTarget) {
+  map.easeTo({ center: [target.longitude, target.latitude], zoom: target.zoom,
+    bearing: 28, pitch: 12, padding: { top: 70, bottom: 170, left: 80, right: 160 },
+    duration: 1900, easing: (t: number) => 1 - Math.pow(1 - t, 3) });
 }
 
 function toGeoJson(items: University[]) {
