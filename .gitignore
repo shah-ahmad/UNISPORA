@@ -2,8 +2,15 @@ node_modules/
 dist/
 .tanstack/
 UNISPORA/
-.env.local
-.env.*.local
+# Local configuration and credentials; keep only the public template.
+.env
+.env.*
+!.env.example
+.appwrite/
+secrets/
+credentials.json
+*.pem
+*.key
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts
