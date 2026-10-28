@@ -20,6 +20,8 @@ function VerifyEmail() {
     const params = new URLSearchParams(window.location.search);
     const userId = params.get("userId");
     const secret = params.get("secret");
+    // Remove verification credentials even if the request later fails.
+    window.history.replaceState(null, "", window.location.pathname);
 
     if (!userId || !secret) {
       setStatus("error");

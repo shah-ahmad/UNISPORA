@@ -1,13 +1,8 @@
-import { databases } from "@/lib/appwrite";
+import { account, databases } from "@/lib/appwrite";
+import { Permission, Role } from "appwrite";
 
 const databaseId = import.meta.env.VITE_APPWRITE_DATABASE_ID ?? "unispora";
 const usernameCollectionId = import.meta.env.VITE_APPWRITE_USERNAMES_COLLECTION_ID ?? "usernames";
-
-type UsernameReservation = {
-  username: string;
-  email?: string;
-  userId?: string;
-};
 
 export function normalizeUsername(value: string) {
   return value
@@ -33,17 +28,19 @@ export function validateUsername(value: string) {
   return normalized;
 }
 
-export async function reserveUsername(username: string, data: Omit<UsernameReservation, "username"> = {}) {
+export async function reserveUsername(username: string) {
   const normalized = validateUsername(username);
+  const owner = await account.get();
+  if (!owner.status || !owner.emailVerification) throw new Error('Verify your account before changing your username.');
 
   try {
     await databases.createDocument({
       databaseId,
       collectionId: usernameCollectionId,
       documentId: normalized,
+      permissions: [Permission.read(Role.user(owner.$id)), Permission.delete(Role.user(owner.$id))],
       data: {
         username: normalized,
-        ...data,
       },
     });
   } catch (error) {
@@ -61,7 +58,7 @@ export async function reserveUsername(username: string, data: Omit<UsernameReser
   return normalized;
 }
 
-export async function reserveAutomaticUsername(email: string, data: Omit<UsernameReservation, "username"> = {}) {
+export async function reserveAutomaticUsername(email: string) {
   const emailPrefix = email.split("@")[0] ?? "user";
   const baseUsername = normalizeUsername(emailPrefix) || "user";
   const compactBase = baseUsername.slice(0, 30);
@@ -70,10 +67,7 @@ export async function reserveAutomaticUsername(email: string, data: Omit<Usernam
     const candidate = index === 0 ? compactBase : `${compactBase}-${index + 1}`;
 
     try {
-      return await reserveUsername(candidate, {
-        email,
-        ...data,
-      });
+      return await reserveUsername(candidate);
     } catch (error) {
       if (error instanceof Error && error.message === "That username is already taken.") {
         continue;

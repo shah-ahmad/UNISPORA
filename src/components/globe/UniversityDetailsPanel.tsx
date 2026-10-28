@@ -1,3 +1,4 @@
+import { safeExternalUrl } from "@/lib/safeUrl";
 import { openAdvisor } from "@/components/ai/AdvisorChat";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
@@ -93,8 +94,8 @@ export function UniversityDetailsPanel({
         <div className="details-actions">
           <button type="button" onClick={() => openAdvisor(university)} className="panel-action primary"><MessageSquareText size={17} /> Ask AI</button>
           <Link to="/consultants" className="panel-action"><Users size={17} /> Consultant</Link>
-          <a className="panel-action map-action" href={university.locationUrl} target="_blank" rel="noreferrer"><MapPinned size={17} /> View on Map</a>
-          <a className="panel-action" href={university.website} target="_blank" rel="noreferrer"><Globe2 size={17} /> Official Website</a>
+          <a className="panel-action map-action" href={safeExternalUrl(university.locationUrl)} target="_blank" rel="noreferrer"><MapPinned size={17} /> View on Map</a>
+          <a className="panel-action" href={safeExternalUrl(university.website)} target="_blank" rel="noreferrer"><Globe2 size={17} /> Official Website</a>
         </div>
         </>}
       </div>
@@ -176,7 +177,7 @@ function CostMeta({ section }: { section?: CostSection }) {
   return (
     <span className="cost-meta">
       {section.source ? (
-        <a className="cost-source-link" href={section.source} target="_blank" rel="noreferrer">
+        <a className="cost-source-link" href={safeExternalUrl(section.source)} target="_blank" rel="noreferrer">
           Official source <Globe2 size={14} />
         </a>
       ) : null}
@@ -241,7 +242,7 @@ function CostBreakdown({ university, kind }: { university: University; kind: "tu
         </span>
       ) : null}
       {university.applicationFeeSource ? (
-        <a className="cost-source-link" href={university.applicationFeeSource} target="_blank" rel="noreferrer">
+        <a className="cost-source-link" href={safeExternalUrl(university.applicationFeeSource)} target="_blank" rel="noreferrer">
           Official source
         </a>
       ) : null}
@@ -324,7 +325,7 @@ function StructuredCostSection({ section }: { section: CostSection }) {
         </span>
       </span>
       {section.source ? (
-        <a className="cost-source-link" href={section.source} target="_blank" rel="noreferrer">
+        <a className="cost-source-link" href={safeExternalUrl(section.source)} target="_blank" rel="noreferrer">
           Official source
         </a>
       ) : null}

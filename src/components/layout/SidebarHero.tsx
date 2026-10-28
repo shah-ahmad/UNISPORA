@@ -1,3 +1,4 @@
+import { safeExternalUrl } from "@/lib/safeUrl";
 import { useWebsiteContent } from "@/hooks/useWebsiteContent";
 import { ArrowRight, GraduationCap, Globe2, Rocket, Star } from "lucide-react";
 import { BrandLogo } from "./BrandLogo";
@@ -26,8 +27,8 @@ export function SidebarHero() {
           <span className="inline-flex h-5 w-5 items-center justify-center"><Rocket size={16} /></span>
         </GlassLink>
       </div>
-      {[...announcements, ...sections.filter(row => row.placement !== 'hero')].map(row => <section className="website-content-card" key={row.$id}><h2>{String(row.title)}</h2><p>{String(row.body || '')}</p>{typeof row.buttonUrl === 'string' && /^https?:\/\//i.test(row.buttonUrl) && row.buttonLabel ? <a href={row.buttonUrl} rel="noreferrer">{String(row.buttonLabel)}</a> : null}</section>)}
-      {hero?.buttonUrl && /^https?:\/\//i.test(String(hero.buttonUrl)) && hero.buttonLabel ? <a className="panel-action" href={String(hero.buttonUrl)}>{String(hero.buttonLabel)}</a> : null}
+      {[...announcements, ...sections.filter(row => row.placement !== 'hero')].map(row => <section className="website-content-card" key={row.$id}><h2>{String(row.title)}</h2><p>{String(row.body || '')}</p>{typeof row.buttonUrl === 'string' && /^https?:\/\//i.test(row.buttonUrl) && row.buttonLabel ? <a href={safeExternalUrl(row.buttonUrl)} rel="noreferrer">{String(row.buttonLabel)}</a> : null}</section>)}
+      {hero?.buttonUrl && /^https?:\/\//i.test(String(hero.buttonUrl)) && hero.buttonLabel ? <a className="panel-action" href={safeExternalUrl(hero.buttonUrl)}>{String(hero.buttonLabel)}</a> : null}
       <div className="stats-grid">
         <StatCard icon={<GraduationCap size={25} />} value="90" label="Universities" />
         <StatCard icon={<Globe2 size={25} />} value="30" label="Countries" />

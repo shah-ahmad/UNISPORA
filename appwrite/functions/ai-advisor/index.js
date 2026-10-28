@@ -1,4 +1,4 @@
-const requests = new Map();
+import { consumeQuota } from './rateLimit.js';
 
 export default async ({ req, res }) => {
   if (req.method !== "POST") return res.json({ message: "Use POST." }, 405);
@@ -12,7 +12,7 @@ export default async ({ req, res }) => {
     });
     if (!identity.ok) return res.json({ message: "Please log in again." }, 401);
     const user = await identity.json();
-    if (user.$id !== userId || !user.emailVerification) return res.json({ message: "Verify your email before chatting." }, 403);
+    if (user.$id !== userId || !user.status || !user.emailVerification) return res.json({ message: "An active, verified account is required." }, 403);
     const body = req.bodyJson;
     const messages = body?.messages;
     if (!Array.isArray(messages) || !messages.length || messages.length > 12 ||
@@ -20,12 +20,12 @@ export default async ({ req, res }) => {
         messages.at(-1).role !== "user" || messages.at(-1).text.length > 2000 || JSON.stringify(body).length > 40000) {
       return res.json({ message: "Please shorten your message and try again." }, 400);
     }
-    const now = Date.now();
-    for (const [id, entry] of requests) if (entry.until < now) requests.delete(id);
-    const rate = requests.get(userId) || { count: 0, until: now + 60000 };
-    if (rate.count >= 5) return res.json({ message: "Please wait a minute before sending more messages." }, 429);
-    rate.count++; requests.set(userId, rate);
     if (!process.env.GEMINI_API_KEY) return res.json({ message: "The advisor is not configured yet." }, 503);
+    const quota = { endpoint: process.env.APPWRITE_FUNCTION_API_ENDPOINT, project: process.env.APPWRITE_FUNCTION_PROJECT_ID, key: req.headers['x-appwrite-key'], userId };
+    if (!await consumeQuota({ ...quota, scope: 'advisor-minute', limit: 5 }) ||
+        !await consumeQuota({ ...quota, scope: 'advisor-day', limit: 100, windowMs: 86400000 })) {
+      return res.json({ message: 'Your advisor usage limit has been reached. Please try again later.' }, 429);
+    }
     const context = body.university ? JSON.stringify(body.university).slice(0, 6000) : "None selected";
     const result = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent", {
       method: "POST", signal: AbortSignal.timeout(40000),

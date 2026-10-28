@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
+import { consumeQuota } from './rateLimit.js';
 const schema = JSON.parse(readFileSync(new URL('./schema.json', import.meta.url), 'utf8'));
 const db = '/databases/unispora/collections/';
 const id = value => {
@@ -7,7 +8,7 @@ const id = value => {
   return value;
 };
 export function validate(collection, input) {
-  if (!schema[collection] || !input || typeof input !== 'object' || Array.isArray(input)) throw new Error('Invalid data.');
+  if (!Object.hasOwn(schema, collection) || !input || typeof input !== 'object' || Array.isArray(input)) throw new Error('Invalid data.');
   const output = {};
   for (const field of schema[collection].fields) {
     const value = input[field.key];
@@ -24,7 +25,11 @@ export function validate(collection, input) {
     } else {
       if (typeof value !== 'string' || (field.size && value.length > field.size) || (field.elements && !field.elements.includes(value))) throw new Error(`Invalid ${field.key}.`);
       if (field.type === 'datetime' && !Number.isFinite(Date.parse(value))) throw new Error(`Invalid ${field.key}.`);
-      if (field.format === 'url' && !/^https?:\/\//i.test(value)) throw new Error('Links must begin with https:// or http://.');
+      if (field.format === 'url') {
+        let url;
+        try { url = new URL(value); } catch { throw new Error('Invalid URL.'); }
+        if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password || /[\u0000-\u0020\u007f]/.test(value)) throw new Error('Use a valid http or https URL without credentials.');
+      }
       if (field.format === 'facts') {
         let facts; try { facts = JSON.parse(value); } catch { throw new Error('Invalid quick facts.'); }
         if (!Array.isArray(facts) || facts.some(f => typeof f?.label !== 'string' || typeof f?.value !== 'string')) throw new Error('Invalid quick facts.');
@@ -62,6 +67,9 @@ export default async ({ req, res, error }) => {
     let caller;
     try { caller = await api('/account', 'GET', null, true); } catch { return res.json({ message: 'Your session expired. Sign in again.' }, 401); }
     if (!caller.status || !caller.emailVerification || !caller.labels?.includes('admin')) return res.json({ message: 'Administrator access required.' }, 403);
+    try {
+      if (!await consumeQuota({ endpoint, project, key: req.headers['x-appwrite-key'], userId: caller.$id, scope: 'admin-minute', limit: 60 })) return res.json({ message: 'Too many admin requests. Wait a minute.' }, 429);
+    } catch { return res.json({ message: 'Admin security service is temporarily unavailable.' }, 503); }
     const body = req.bodyJson || {};
     if (JSON.stringify(body).length > 150000) return res.json({ message: 'Request is too large.' }, 400);
     if (body.action === 'listUsers') {
@@ -84,7 +92,7 @@ export default async ({ req, res, error }) => {
       if (data.status === 'active' && Date.parse(data.expiresAt) <= Date.now()) throw new Error('Active access must expire in the future.');
     } else {
       collection = body.collection;
-      if (!schema[collection] || schema[collection].private) throw new Error('This collection is not editable here.');
+      if (!Object.hasOwn(schema, collection) || schema[collection].private) throw new Error('This collection is not editable here.');
       if (body.documentId) id(body.documentId);
       if (body.action === 'save') {
         data = validate(collection, body.data);

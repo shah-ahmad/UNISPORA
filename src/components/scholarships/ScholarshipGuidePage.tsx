@@ -1,3 +1,4 @@
+import { safeExternalUrl } from "@/lib/safeUrl";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
@@ -40,7 +41,7 @@ export function ScholarshipGuidePage({ slug }: { slug: string }) {
     };
   }, [slug]);
 
-  if (loading) return <AppShell><section className="scholarship-page"><p>Loading scholarship…</p></section></AppShell>;
+  if (loading) return <AppShell><section className="scholarship-page"><p>Loading scholarshipâ€¦</p></section></AppShell>;
   if (!scholarship) {
     return (
       <AppShell>
@@ -169,7 +170,7 @@ export function ScholarshipGuidePage({ slug }: { slug: string }) {
             </Section>
 
             {scholarship.officialUrl ? (
-              <a className="panel-action primary scholarship-official-link" href={scholarship.officialUrl} target="_blank" rel="noreferrer">
+              <a className="panel-action primary scholarship-official-link" href={safeExternalUrl(scholarship.officialUrl)} target="_blank" rel="noreferrer">
                 Official scholarship website <ExternalLink size={17} />
               </a>
             ) : null}

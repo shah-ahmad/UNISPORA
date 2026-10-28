@@ -1,3 +1,4 @@
+import { RequireAccount } from "@/components/auth/RequireAccount";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/layout/AppShell";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -8,7 +9,7 @@ export const Route = createFileRoute("/dashboard/consultant")({
 
 function ConsultantDashboard() {
   return (
-    <AppShell>
+    <AppShell><RequireAccount>
       <div className="page-container">
         <header className="page-header"><p>Consultant dashboard</p><h1>Manage profile, bookings, inquiries, ratings, and earnings.</h1></header>
         <div className="dashboard-grid">
@@ -22,6 +23,6 @@ function ConsultantDashboard() {
           ].map(([title, body]) => <GlassCard key={title} className="p-5"><h2>{title}</h2><p>{body}</p></GlassCard>)}
         </div>
       </div>
-    </AppShell>
+    </RequireAccount></AppShell>
   );
 }

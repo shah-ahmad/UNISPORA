@@ -83,13 +83,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
     async signup(email, password, role, fullName, country) {
       if (!fullName.trim() || !country.trim()) throw new Error("Enter your name and country.");
-      const reservedUsername = await reserveAutomaticUsername(email);
-      try {
-        await account.create({ userId: ID.unique(), email, password, name: reservedUsername });
-      } catch (error) {
-        releaseUsername(reservedUsername).catch(() => undefined);
-        throw error;
-      }
+      // Signup must not publish email addresses or create anonymous reservations.
+      const accountId = ID.unique();
+      const initialName = `user-${accountId}`.slice(0, 36);
+      await account.create({ userId: accountId, email, password, name: initialName });
       await account.createEmailPasswordSession(email, password);
       try {
         await account.updatePrefs({ prefs: { role, fullName: fullName.trim(), country: country.trim() } });
@@ -128,10 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return currentUser as Models.User<UniSporaPreferences>;
       }
 
-      const newUsername = await reserveUsername(name, {
-        email: user?.email,
-        userId: user?.$id,
-      });
+      const newUsername = await reserveUsername(name);
       const currentUser = await account.updateName(newUsername);
       setUser(currentUser as Models.User<UniSporaPreferences>);
       if (oldUsername && oldUsername !== newUsername) {
@@ -173,10 +167,7 @@ async function finalizeCurrentUser(currentUser: Models.User<UniSporaPreferences>
   if (normalizedName && normalizedName === currentUser.name) return currentUser;
 
   try {
-    const username = await reserveAutomaticUsername(currentUser.email, {
-      email: currentUser.email,
-      userId: currentUser.$id,
-    });
+    const username = await reserveAutomaticUsername(currentUser.email);
     return await account.updateName(username) as Models.User<UniSporaPreferences>;
   } catch {
     return currentUser;

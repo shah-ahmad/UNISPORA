@@ -15,7 +15,6 @@ for (const [collectionId, config] of Object.entries(schema)) {
   const permissions = [config.published || config.private || collectionId === 'premium_plans' ? 'read("label:admin")' : 'read("any")'];
   try { collection = await api(root + '/' + collectionId); }
   catch (e) { if (e.status !== 404) throw e; collection = await api(root, 'POST', { collectionId, name: config.label, permissions, documentSecurity: !!config.published }); }
-  if (!process.env.ADMIN_LOCK_WRITES && ['universities', 'consultants'].includes(collectionId)) permissions.push('create("label:admin")', 'update("label:admin")', 'delete("label:admin")');
   // All writes now go through the authenticated admin function and its audit trail.
   await api(root + '/' + collectionId, 'PUT', { name: config.label, permissions, documentSecurity: !!config.published, enabled: true });
   for (const field of config.fields) {

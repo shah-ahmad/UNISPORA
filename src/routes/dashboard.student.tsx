@@ -1,3 +1,4 @@
+import { RequireAccount } from "@/components/auth/RequireAccount";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/layout/AppShell";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -11,7 +12,7 @@ function StudentDashboard() {
   const { universities } = useUniversities();
 
   return (
-    <AppShell>
+    <AppShell><RequireAccount>
       <Dashboard title="Student dashboard" subtitle="Your saved universities, AI chats, bookings, and application progress.">
         <GlassCard className="p-5"><h2>Saved universities</h2>{universities.slice(0, 3).map((u) => <p key={u.id}>{u.name}</p>)}</GlassCard>
         <GlassCard className="p-5"><h2>Recent AI chats</h2><p>Scholarship fit for TUM</p><p>English-taught programs in Singapore</p></GlassCard>
@@ -19,7 +20,7 @@ function StudentDashboard() {
         <GlassCard className="p-5"><h2>Application checklist</h2><p>Passport, transcript, SOP, recommendation letters, fee proof</p></GlassCard>
         <GlassCard className="p-5 lg:col-span-2"><h2>Recommended universities</h2><p>{universities.slice(3, 7).map((u) => u.name).join(" · ")}</p></GlassCard>
       </Dashboard>
-    </AppShell>
+    </RequireAccount></AppShell>
   );
 }
 

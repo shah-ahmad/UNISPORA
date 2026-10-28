@@ -21,6 +21,7 @@ test('self and all administrators are protected from blocking', () => {
 async function run(body, user, responses = [], jwt = 'test') {
   const calls = []; const original = globalThis.fetch;
   globalThis.fetch = async (url, options) => {
+    if (String(url).includes('/security_rate_limits/')) return new Response('{}', {status:201});
     calls.push({url,options});
     return new Response(JSON.stringify(calls.length === 1 ? user : responses.shift() || {}), {status:200});
   };
@@ -47,4 +48,8 @@ test('published content receives public read only and writes are audited', async
 });
 test('audit records cannot be edited through generic catalog actions', async () => {
   const {response,calls} = await run({action:'delete',collection:'admin_activity',documentId:'event'},admin); assert.equal(response.status,400); assert.equal(calls.length,1);
+});
+
+test('prototype collection names are rejected', () => {
+  for (const key of ['__proto__', 'constructor', 'toString']) assert.throws(() => validate(key, {}), /Invalid data/);
 });
